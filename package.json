@@ -1,0 +1,33 @@
+{
+  "name": "vat",
+  "version": "0.0.0",
+  "description": "VAT - Validation and transforms",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "grunt mocha"
+  },
+  "author": "Shane Tomlinson <shane@shanetomlinson.com>",
+  "license": "MPL-2.0",
+  "devDependencies": {
+    "babel-preset-es2015": "6.5.0",
+    "bower": "1.7.7",
+    "chai": "3.5.0",
+    "grunt": "0.4.5",
+    "grunt-babel": "6.0.0",
+    "grunt-contrib-clean": "1.0.0",
+    "grunt-contrib-watch": "0.6.1",
+    "grunt-eslint": "18.0.0",
+    "grunt-jscs": "2.7.0",
+    "grunt-mocha-test": "0.12.7",
+    "grunt-webpack": "1.0.11",
+    "load-grunt-tasks": "3.4.0",
+    "webpack": "1.12.14",
+    "webpack-dev-server": "1.14.1"
+  },
+  "dependencies": {
+    "underscore": "1.8.3"
+  }
+}
