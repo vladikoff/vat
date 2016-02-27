@@ -43,6 +43,202 @@ function expectReferenceError(func, val) {
 }
 
 describe('lib/validator', function () {
+  describe('any', function () {
+    var func;
+
+    beforeEach(function () {
+      func = Validator.any();
+    });
+
+    it('returns a function', function () {
+      assert.isFunction(func);
+    });
+
+    it('success', function () {
+      expectSuccess(func, '', '');
+      expectSuccess(func, '123', '123');
+      expectSuccess(func, 123, 123);
+    });
+
+    it('throws a ReferenceError if undefined', function () {
+      expectReferenceError(func, undefined);
+    });
+
+    describe('with `optional`', function () {
+      beforeEach(function () {
+        func = null;
+        func = Validator.any().optional();
+      });
+
+      it('returns a function', function () {
+        assert.isFunction(func);
+      });
+
+      it('returns `true` for strings', function () {
+        expectSuccess(func, '');
+        expectSuccess(func, '123');
+      });
+
+
+      it('returns `true` if the value is undefined', function () {
+        expectSuccess(func, undefined);
+      });
+    });
+
+    describe('with `required`', function () {
+      beforeEach(function () {
+        func = null;
+        // required overrules optional
+        func = Validator.any().optional().required();
+      });
+
+      it('returns a function', function () {
+        assert.isFunction(func);
+      });
+
+      it('returns `true` for any values as long as they are defined', function () {
+        expectSuccess(func, '');
+        expectSuccess(func, '123');
+      });
+
+      it('throws a ReferenceError if undefined', function () {
+        expectReferenceError(func, undefined);
+      });
+    });
+
+    describe('with `use`', function () {
+      beforeEach(function () {
+        func = null;
+        func = Validator.any().use(function (val) {
+          return /^valid/.test(val);
+        });
+      });
+
+      it('returns a function', function () {
+        assert.isFunction(func);
+      });
+
+      it('returns `true` for strings that pass the validation function', function () {
+        expectSuccess(func, 'valid1');
+        expectSuccess(func, 'valid2');
+      });
+
+      it('throws a TypeError for items that do not pass the validation function', function () {
+        expectTypeError(func, 123);
+        expectTypeError(func, '123');
+      });
+
+      describe('with chained `use`', () => {
+        beforeEach(() => {
+          func = null;
+          func = Validator.any().use((val) => {
+            return /^valid/.test(val);
+          }).use((val) => {
+            return /\.name$/.test(val);
+          });
+        });
+
+        it('returns a function', () => {
+          assert.isFunction(func);
+        });
+
+        it('returns `true` for strings that pass the validation function', () => {
+          expectSuccess(func, 'valid.name');
+          expectSuccess(func, 'valid1.name');
+          expectSuccess(func, 'valid.with.lots.of.random.stuff.name');
+        });
+
+        it('throws a TypeError for strings that do not pass the validation function', function () {
+          expectTypeError(func, 'validname');
+          expectTypeError(func, 'invalid.name');
+        });
+      });
+    });
+
+    describe('with `allow`', function () {
+      beforeEach(function () {
+        func = null;
+        func = Validator.any().use(function (val) {
+          return /^valid/.test(val);
+        }).allow('');
+      });
+
+      it('returns a function', function () {
+        assert.isFunction(func);
+      });
+
+      it('returns `true` for items that pass the validation function', function () {
+        expectSuccess(func, 'valid1');
+        expectSuccess(func, 'valid2');
+      });
+
+      it('returns `true` for tems that are allowed', function () {
+        expectSuccess(func, '');
+      });
+
+      it('throws a TypeError for items that do not pass the validation function', function () {
+        expectTypeError(func, '123');
+      });
+    });
+
+    describe('with `valid`', function () {
+      beforeEach(function () {
+        func = null;
+        func = Validator.any().valid('this').valid('or').valid('that').valid(1);
+      });
+
+      it('returns a function', function () {
+        assert.isFunction(func);
+      });
+
+      it('returns `true` for items that are valid', function () {
+        expectSuccess(func, 'this');
+        expectSuccess(func, 'or');
+        expectSuccess(func, 'that');
+        expectSuccess(func, 1);
+      });
+
+      it('throws a TypeError for all other values', function () {
+        expectTypeError(func, '');
+        expectTypeError(func, 'hey');
+      });
+    });
+
+    describe('with `as`', function () {
+      beforeEach(function () {
+        func = null;
+        func = Validator.any().as('target');
+      });
+
+      it('setter returns a function', function () {
+        assert.isFunction(func);
+      });
+
+      it('getter returns value', function () {
+        assert.equal(func.as(), 'target');
+      });
+    });
+
+    describe('with `transform`', () => {
+      beforeEach(() => {
+        func = null;
+        func = Validator.any().transform((val) => {
+          return val + '.suffix';
+        }).transform((val) => {
+          return val + '.second.suffix';
+        });
+      });
+
+      it('returns a function', () => {
+        assert.isFunction(func);
+      });
+
+      it('function returns the transformed value', () => {
+        assert.equal(func('hey'), 'hey.suffix.second.suffix');
+      });
+    });
+  });
+
   describe('string', function () {
     var func;
 
@@ -70,134 +266,6 @@ describe('lib/validator', function () {
       expectTypeError(func, {});
       expectTypeError(func, []);
     });
-
-    describe('with `optional`', function () {
-      beforeEach(function () {
-        func = null;
-        func = Validator.string().optional();
-      });
-
-      it('returns a function', function () {
-        assert.isFunction(func);
-      });
-
-      it('returns `true` for strings', function () {
-        expectSuccess(func, '');
-        expectSuccess(func, '123');
-      });
-
-
-      it('returns `true` if the value is undefined', function () {
-        expectSuccess(func, undefined);
-      });
-    });
-
-    describe('with `required`', function () {
-      beforeEach(function () {
-        func = null;
-        // required overrules optional
-        func = Validator.string().optional().required();
-      });
-
-      it('returns a function', function () {
-        assert.isFunction(func);
-      });
-
-      it('returns `true` for strings', function () {
-        expectSuccess(func, '');
-        expectSuccess(func, '123');
-      });
-
-      it('throws a ReferenceError if undefined', function () {
-        expectReferenceError(func, undefined);
-      });
-    });
-
-    describe('with `use`', function () {
-      beforeEach(function () {
-        func = null;
-        func = Validator.string().use(function (val) {
-          return /^valid/.test(val);
-        });
-      });
-
-      it('returns a function', function () {
-        assert.isFunction(func);
-      });
-
-      it('returns `true` for strings that pass the validation function', function () {
-        expectSuccess(func, 'valid1');
-        expectSuccess(func, 'valid2');
-      });
-
-      it('throws a TypeError for strings that do not pass the validation function', function () {
-        expectTypeError(func, '');
-        expectTypeError(func, '123');
-      });
-    });
-
-    describe('with `allow`', function () {
-      beforeEach(function () {
-        func = null;
-        func = Validator.string().use(function (val) {
-          return /^valid/.test(val);
-        }).allow('');
-      });
-
-      it('returns a function', function () {
-        assert.isFunction(func);
-      });
-
-      it('returns `true` for strings that pass the validation function', function () {
-        expectSuccess(func, 'valid1');
-        expectSuccess(func, 'valid2');
-      });
-
-      it('returns `true` for strings that are allowed', function () {
-        expectSuccess(func, '');
-      });
-
-      it('throws a TypeError for strings that do not pass the validation function', function () {
-        expectTypeError(func, '123');
-      });
-    });
-
-    describe('with `valid`', function () {
-      beforeEach(function () {
-        func = null;
-        func = Validator.string().valid('this').valid('or').valid('that');
-      });
-
-      it('returns a function', function () {
-        assert.isFunction(func);
-      });
-
-      it('returns `true` for items that are valid', function () {
-        expectSuccess(func, 'this');
-        expectSuccess(func, 'or');
-        expectSuccess(func, 'that');
-      });
-
-      it('throws a TypeError for all other values', function () {
-        expectTypeError(func, '');
-        expectTypeError(func, 'hey');
-      });
-    });
-
-    describe('with `as`', function () {
-      beforeEach(function () {
-        func = null;
-        func = Validator.string().as('target');
-      });
-
-      it('setter returns a function', function () {
-        assert.isFunction(func);
-      });
-
-      it('getter returns value', function () {
-        assert.equal(func.as(), 'target');
-      });
-    });
   });
 
   describe('boolean', function () {
@@ -211,7 +279,7 @@ describe('lib/validator', function () {
       assert.isFunction(func);
     });
 
-    it('returns `true` for boolean values or values that can be converted to boolean', function () {
+    it('returns `true` for boolean values or values that can be transformed to boolean', function () {
       expectSuccess(func, true);
       expectSuccess(func, 'true', true);
       expectSuccess(func, false);
@@ -234,7 +302,52 @@ describe('lib/validator', function () {
         assert.isFunction(func);
       });
 
-      it('throws for values that can be converted to boolean', function () {
+      it('throws for values that can be transformed to boolean', function () {
+        expectTypeError(func, 'true');
+        expectTypeError(func, 'false');
+      });
+    });
+  });
+
+  describe('number', function () {
+    var func;
+
+    beforeEach(function () {
+      func = Validator.number();
+    });
+
+    it('returns a function', function () {
+      assert.isFunction(func);
+    });
+
+    it('succeeds for numeric values or values that can be transformed to boolean', function () {
+      expectSuccess(func, 0);
+      expectSuccess(func, '1', 1);
+      expectSuccess(func, Infinity);
+      expectSuccess(func, '3.1415', 3.1415);
+    });
+
+    it('throws a TypeError if not', function () {
+      expectTypeError(func, true);
+      expectTypeError(func, false);
+      expectTypeError(func, {});
+      expectTypeError(func, []);
+      expectTypeError(func, '');
+      expectTypeError(func, 'NaN');
+      expectTypeError(func, '3.1415notanumber');
+      expectTypeError(func, 'asdf.jkl');
+    });
+
+    describe('strict', function () {
+      beforeEach(function () {
+        func = Validator.boolean().strict();
+      });
+
+      it('returns a function', function () {
+        assert.isFunction(func);
+      });
+
+      it('throws for values that can be transformed to boolean', function () {
         expectTypeError(func, 'true');
         expectTypeError(func, 'false');
       });
@@ -343,7 +456,7 @@ describe('lib/validator', function () {
           result = Validator.validate({ bool: 'true' }, schema);
         });
 
-        it('returns the converted value', function () {
+        it('returns the transformed value', function () {
           assert.isTrue(result.value.bool);
         });
       });
