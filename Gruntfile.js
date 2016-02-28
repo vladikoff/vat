@@ -15,28 +15,4 @@ module.exports = function (grunt) {
 
   // load local Grunt tasks
   grunt.loadTasks('tasks');
-
-  grunt.registerTask('build',
-    'Build client',
-    ['clean', 'lint', 'requirejs', 'bytesize']);
-
-  grunt.registerTask('lint',
-    'Alias for eslint, jshint and jscs tasks',
-    ['eslint', 'jscs']);
-
-  grunt.registerTask('default',
-    ['build']);
-
-  grunt.registerTask('release',
-    ['build', 'bump-only', 'conventionalChangelog', 'bump-commit', 'yuidoc', 'buildcontrol']);
-
-  grunt.registerTask('dev',
-    ['watch:dev']);
-
-  grunt.registerTask('debug',
-    ['watch:debug']);
-
-  grunt.registerTask('doc',
-    'Create client documentation using YUIDoc',
-    ['yuidoc', 'open']);
 };
