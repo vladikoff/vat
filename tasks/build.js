@@ -7,8 +7,10 @@ module.exports = function (grunt) {
     // Clean files and folders from any previous build
     'clean',
 
-    'webpack',
+    // Create a single bundle
+    'browserify',
 
+    // Convert ES6 into ES5
     'babel'
   ]);
 };

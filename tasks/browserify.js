@@ -10,7 +10,9 @@ module.exports = function (grunt) {
       src: ['./lib/validator.js'],
       dest: '.tmp/validator.js',
       options: {
-        standalone: 'Validator'
+        browserifyOptions: {
+          standalone: 'Validator'
+        }
       }
     }
   });
