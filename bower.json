@@ -1,0 +1,26 @@
+{
+  "name": "vat",
+  "description": "VAT - Validate and Transform data in JavaScript",
+  "main": "build/validator.js",
+  "authors": [
+    "Shane Tomlinson <shane@shanetomlinson.com>"
+  ],
+  "license": "MPL-2.0",
+  "keywords": [
+    "validate",
+    "transform"
+  ],
+  "homepage": "https://github.com/shane-tomlinson/vat",
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
