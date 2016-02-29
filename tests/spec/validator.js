@@ -253,6 +253,9 @@ describe('lib/validator', function () {
     it('success', function () {
       expectSuccess(func, '', '');
       expectSuccess(func, '123', '123');
+      // strings are trimmed by default
+      expectSuccess(func, ' 123', '123');
+      expectSuccess(func, '123 ', '123');
     });
 
     it('throws a ReferenceError if undefined', function () {
@@ -265,6 +268,86 @@ describe('lib/validator', function () {
       expectTypeError(func, 1);
       expectTypeError(func, {});
       expectTypeError(func, []);
+    });
+
+    describe('strict', function () {
+      beforeEach(function () {
+        func = Validator.string().strict();
+      });
+
+      it('returns a function', function () {
+        assert.isFunction(func);
+      });
+
+      it('success', function () {
+        // strings are not trimmed
+        expectSuccess(func, ' 123', ' 123');
+        expectSuccess(func, '123 ', '123 ');
+      });
+    });
+
+    describe('len', function () {
+      beforeEach(function () {
+        func = Validator.string().len(2);
+      });
+
+      it('returns a function', function () {
+        assert.isFunction(func);
+      });
+
+      it('success', function () {
+        expectSuccess(func, '12', '12');
+      });
+
+      it('throws a TypeError if too short', function () {
+        expectTypeError(func, '');
+        expectTypeError(func, '1');
+      });
+
+      it('throws a TypeError if too long', function () {
+        expectTypeError(func, '123');
+      });
+    });
+
+    describe('min', function () {
+      beforeEach(function () {
+        func = Validator.string().min(2);
+      });
+
+      it('returns a function', function () {
+        assert.isFunction(func);
+      });
+
+      it('success', function () {
+        expectSuccess(func, '12', '12');
+        expectSuccess(func, '123', '123');
+      });
+
+      it('throws a TypeError if too short', function () {
+        expectTypeError(func, '');
+        expectTypeError(func, '1');
+      });
+    });
+
+    describe('max', function () {
+      beforeEach(function () {
+        func = Validator.string().max(2);
+      });
+
+      it('returns a function', function () {
+        assert.isFunction(func);
+      });
+
+      it('success', function () {
+        expectSuccess(func, '', '');
+        expectSuccess(func, '1', '1');
+        expectSuccess(func, '12', '12');
+      });
+
+      it('throws a TypeError if too long', function () {
+        expectTypeError(func, '123');
+        expectTypeError(func, '124');
+      });
     });
   });
 
