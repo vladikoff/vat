@@ -31,10 +31,8 @@ describe('types/string', () => {
     // strings are trimmed by default
     expectSuccess(func, ' 123', '123');
     expectSuccess(func, '123 ', '123');
-  });
-
-  it('throws a ReferenceError if undefined', () => {
-    expectReferenceError(func, undefined);
+    // optional by default
+    expectSuccess(func, undefined);
   });
 
   it('throws a TypeError for non-strings', () => {
