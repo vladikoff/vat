@@ -77,10 +77,10 @@ describe('types/any', () => {
     });
   });
 
-  describe('with `use`', () => {
+  describe('with `test`', () => {
     beforeEach(() => {
       func = null;
-      func = Validator.any().use(function (val) {
+      func = Validator.any().test(function (val) {
         return /^valid/.test(val);
       });
     });
@@ -99,12 +99,12 @@ describe('types/any', () => {
       expectTypeError(func, '123');
     });
 
-    describe('with chained `use`', () => {
+    describe('with chained `test`', () => {
       beforeEach(() => {
         func = null;
-        func = Validator.any().use((val) => {
+        func = Validator.any().test((val) => {
           return /^valid/.test(val);
-        }).use((val) => {
+        }).test((val) => {
           return /\.name$/.test(val);
         });
       });
@@ -129,7 +129,7 @@ describe('types/any', () => {
   describe('with `allow`', () => {
     beforeEach(() => {
       func = null;
-      func = Validator.any().use(function (val) {
+      func = Validator.any().test(function (val) {
         return /^valid/.test(val);
       }).allow('');
     });
