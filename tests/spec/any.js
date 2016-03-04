@@ -29,16 +29,36 @@ describe('types/any', () => {
     expectSuccess(func, '', '');
     expectSuccess(func, '123', '123');
     expectSuccess(func, 123, 123);
+
+    // optional by default
+    expectSuccess(func, undefined);
   });
 
-  it('throws a ReferenceError if undefined', () => {
-    expectReferenceError(func, undefined);
+  describe('with `required`', () => {
+    beforeEach(() => {
+      func = null;
+      // required overrules optional
+      func = Validator.any().required();
+    });
+
+    it('returns a function', () => {
+      assert.isFunction(func);
+    });
+
+    it('returns `true` for any values as long as they are defined', () => {
+      expectSuccess(func, '');
+      expectSuccess(func, '123');
+    });
+
+    it('throws a ReferenceError if undefined', () => {
+      expectReferenceError(func, undefined);
+    });
   });
 
   describe('with `optional`', () => {
     beforeEach(() => {
       func = null;
-      func = Validator.any().optional();
+      func = Validator.any().required().optional();
     });
 
     it('returns a function', () => {
@@ -56,26 +76,6 @@ describe('types/any', () => {
     });
   });
 
-  describe('with `required`', () => {
-    beforeEach(() => {
-      func = null;
-      // required overrules optional
-      func = Validator.any().optional().required();
-    });
-
-    it('returns a function', () => {
-      assert.isFunction(func);
-    });
-
-    it('returns `true` for any values as long as they are defined', () => {
-      expectSuccess(func, '');
-      expectSuccess(func, '123');
-    });
-
-    it('throws a ReferenceError if undefined', () => {
-      expectReferenceError(func, undefined);
-    });
-  });
 
   describe('with `test`', () => {
     beforeEach(() => {
