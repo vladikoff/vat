@@ -88,12 +88,13 @@ describe('lib/validator', () => {
     describe('complex values', () => {
       let schema = {
         optional: Validator.string().optional(),
-        required: Validator.string().required().valid('valid')
+        required: Validator.string().required(),
+        requiredValid: Validator.string().required().valid('valid')
       };
 
       describe('with valid data', () => {
         beforeEach(() => {
-          result = Validator.validate({ required: 'valid' }, schema);
+          result = Validator.validate({ required: 'value', requiredValid: 'valid' }, schema);
         });
 
         it('returns an object with a null `error`', () => {
@@ -102,21 +103,37 @@ describe('lib/validator', () => {
 
         it('returns an object with `value` with expected fields', () => {
           assert.isObject(result.value);
-          assert.equal(Object.keys(result.value).length, 1);
+          assert.equal(Object.keys(result.value).length, 2);
         });
 
         it('sets the correct field value', () => {
-          assert.equal(result.value.required, 'valid');
+          assert.equal(result.value.required, 'value');
+          assert.equal(result.value.requiredValid, 'valid');
         });
 
       });
 
-      describe('with missing data', () => {
+      describe('with missing data for field with `valid`', () => {
         beforeEach(() => {
-          result = Validator.validate({}, schema);
+          result = Validator.validate({ required: 'value' }, schema);
         });
 
         it('returns an object with `error`', () => {
+          // TypeError is thrown with `valid` declarations
+          // and `undefined` values.
+          assert.instanceOf(result.error, TypeError);
+          assert.equal(result.error.key, 'requiredValid');
+        });
+      });
+
+      describe('with missing data for field without `valid`', () => {
+        beforeEach(() => {
+          result = Validator.validate({ requiredValid: 'valid' }, schema);
+        });
+
+        it('returns an object with `error`', () => {
+          // TypeError is thrown with `valid` declarations
+          // and `undefined` values.
           assert.instanceOf(result.error, ReferenceError);
           assert.equal(result.error.key, 'required');
         });
@@ -124,12 +141,12 @@ describe('lib/validator', () => {
 
       describe('with invalid data', () => {
         beforeEach(() => {
-          result = Validator.validate({ required: 'invalid' }, schema);
+          result = Validator.validate({ required: 'value', requiredValid: 'invalid' }, schema);
         });
 
         it('returns an object with `error`', () => {
           assert.instanceOf(result.error, TypeError);
-          assert.equal(result.error.key, 'required');
+          assert.equal(result.error.key, 'requiredValid');
         });
       });
 

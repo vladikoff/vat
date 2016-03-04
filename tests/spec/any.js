@@ -58,7 +58,7 @@ describe('types/any', () => {
   describe('with `optional`', () => {
     beforeEach(() => {
       func = null;
-      func = Validator.any().required().optional();
+      func = Validator.any().optional();
     });
 
     it('returns a function', () => {
@@ -73,6 +73,21 @@ describe('types/any', () => {
 
     it('returns `true` if the value is undefined', () => {
       expectSuccess(func, undefined);
+    });
+
+    describe('`optional` after `required`', () => {
+      beforeEach(() => {
+        func = null;
+        func = Validator.any().required().optional();
+      });
+
+      it('returns a function', () => {
+        assert.isFunction(func);
+      });
+
+      it('has no real effect, `required` takes precedence, error is thrown', () => {
+        expectReferenceError(func, undefined);
+      });
     });
   });
 
