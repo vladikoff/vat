@@ -8,35 +8,46 @@
 
 const assert = require('chai').assert;
 
-exports.expectSuccess = function (func, val, expected) {
+function validate(schema, value) {
+  return schema.validate ? schema.validate(value) : schema(value);
+}
+
+exports.expectSuccess = function (schema, value, expected) {
   if (arguments.length === 2) {
-    expected = val;
+    expected = value;
   }
 
-  let result = func(val);
+  let result = validate(schema, value);
 
   assert.strictEqual(result, expected);
 
   return result;
 };
 
-exports.expectTypeError = function (func, val) {
+exports.expectTypeError = function (schema, value) {
   let err;
   try {
-    func(val);
+    validate(schema, value);
   } catch (_err) {
     err = _err;
   }
   assert.instanceOf(err, TypeError);
-  assert.strictEqual(err.value, val);
+  assert.strictEqual(err.value, value);
 };
 
-exports.expectReferenceError = function (func, val) {
+exports.expectReferenceError = function (schema, value) {
   let err;
   try {
-    func(val);
+    validate(schema, value);
   } catch (_err) {
     err = _err;
   }
   assert.instanceOf(err, ReferenceError);
+};
+
+/**
+ * Is the item a schema
+ */
+exports.isSchema = function (schema) {
+  return !! schema.validate;
 };

@@ -13,80 +13,81 @@ const Validator = require('../../lib/validator');
 const expectSuccess = Helpers.expectSuccess;
 const expectTypeError = Helpers.expectTypeError;
 const expectReferenceError = Helpers.expectReferenceError;
+const isSchema = Helpers.isSchema;
 
 describe('types/any', () => {
-  let func;
+  let schema;
 
   beforeEach(() => {
-    func = Validator.any();
+    schema = Validator.any();
   });
 
-  it('returns a function', () => {
-    assert.isFunction(func);
+  it('returns a schema', () => {
+    assert.isTrue(isSchema(schema));
   });
 
   it('success', () => {
-    expectSuccess(func, '', '');
-    expectSuccess(func, '123', '123');
-    expectSuccess(func, 123, 123);
+    expectSuccess(schema, '', '');
+    expectSuccess(schema, '123', '123');
+    expectSuccess(schema, 123, 123);
 
     // optional by default
-    expectSuccess(func, undefined);
+    expectSuccess(schema, undefined);
   });
 
   describe('with `required`', () => {
     beforeEach(() => {
-      func = null;
+      schema = null;
       // required overrules optional
-      func = Validator.any().required();
+      schema = Validator.any().required();
     });
 
-    it('returns a function', () => {
-      assert.isFunction(func);
+    it('returns a schema', () => {
+      assert.isTrue(isSchema(schema));
     });
 
     it('returns `true` for any values as long as they are defined', () => {
-      expectSuccess(func, '');
-      expectSuccess(func, '123');
+      expectSuccess(schema, '');
+      expectSuccess(schema, '123');
     });
 
     it('throws a ReferenceError if undefined', () => {
-      expectReferenceError(func, undefined);
+      expectReferenceError(schema, undefined);
     });
   });
 
   describe('with `optional`', () => {
     beforeEach(() => {
-      func = null;
-      func = Validator.any().optional();
+      schema = null;
+      schema = Validator.any().optional();
     });
 
-    it('returns a function', () => {
-      assert.isFunction(func);
+    it('returns a schema', () => {
+      assert.isTrue(isSchema(schema));
     });
 
     it('returns `true` for strings', () => {
-      expectSuccess(func, '');
-      expectSuccess(func, '123');
+      expectSuccess(schema, '');
+      expectSuccess(schema, '123');
     });
 
 
     it('returns `true` if the value is undefined', () => {
-      expectSuccess(func, undefined);
+      expectSuccess(schema, undefined);
     });
 
     describe('`optional` after `required`', () => {
       beforeEach(() => {
-        func = null;
-        func = Validator.any().required().optional();
+        schema = null;
+        schema = Validator.any().required().optional();
       });
 
-      it('returns a function', () => {
-        assert.isFunction(func);
+      it('returns a schema', () => {
+        assert.isTrue(isSchema(schema));
       });
 
       it('has no real effect, `required` takes precedence, error is thrown', () => {
-        expectReferenceError(func, undefined);
+        expectReferenceError(schema, undefined);
       });
     });
   });
@@ -94,133 +95,133 @@ describe('types/any', () => {
 
   describe('with `test`', () => {
     beforeEach(() => {
-      func = null;
-      func = Validator.any().test(function (val) {
+      schema = null;
+      schema = Validator.any().test((val) => {
         return /^valid/.test(val);
       });
     });
 
-    it('returns a function', () => {
-      assert.isFunction(func);
+    it('returns a schema', () => {
+      assert.isTrue(isSchema(schema));
     });
 
     it('returns `true` for strings that pass the validation function', () => {
-      expectSuccess(func, 'valid1');
-      expectSuccess(func, 'valid2');
+      expectSuccess(schema, 'valid1');
+      expectSuccess(schema, 'valid2');
     });
 
     it('throws a TypeError for items that do not pass the validation function', () => {
-      expectTypeError(func, 123);
-      expectTypeError(func, '123');
+      expectTypeError(schema, 123);
+      expectTypeError(schema, '123');
     });
 
     describe('with chained `test`', () => {
       beforeEach(() => {
-        func = null;
-        func = Validator.any().test((val) => {
+        schema = null;
+        schema = Validator.any().test((val) => {
           return /^valid/.test(val);
         }).test((val) => {
           return /\.name$/.test(val);
         });
       });
 
-      it('returns a function', () => {
-        assert.isFunction(func);
+      it('returns a schema', () => {
+        assert.isTrue(isSchema(schema));
       });
 
       it('returns `true` for strings that pass the validation function', () => {
-        expectSuccess(func, 'valid.name');
-        expectSuccess(func, 'valid1.name');
-        expectSuccess(func, 'valid.with.lots.of.random.stuff.name');
+        expectSuccess(schema, 'valid.name');
+        expectSuccess(schema, 'valid1.name');
+        expectSuccess(schema, 'valid.with.lots.of.random.stuff.name');
       });
 
       it('throws a TypeError for strings that do not pass the validation function', () => {
-        expectTypeError(func, 'validname');
-        expectTypeError(func, 'invalid.name');
+        expectTypeError(schema, 'validname');
+        expectTypeError(schema, 'invalid.name');
       });
     });
   });
 
   describe('with `allow`', () => {
     beforeEach(() => {
-      func = null;
-      func = Validator.any().test(function (val) {
+      schema = null;
+      schema = Validator.any().test((val) => {
         return /^valid/.test(val);
       }).allow('');
     });
 
-    it('returns a function', () => {
-      assert.isFunction(func);
+    it('returns a schema', () => {
+      assert.isTrue(isSchema(schema));
     });
 
     it('returns `true` for items that pass the validation function', () => {
-      expectSuccess(func, 'valid1');
-      expectSuccess(func, 'valid2');
+      expectSuccess(schema, 'valid1');
+      expectSuccess(schema, 'valid2');
     });
 
     it('returns `true` for tems that are allowed', () => {
-      expectSuccess(func, '');
+      expectSuccess(schema, '');
     });
 
     it('throws a TypeError for items that do not pass the validation function', () => {
-      expectTypeError(func, '123');
+      expectTypeError(schema, '123');
     });
   });
 
   describe('with `valid`', () => {
     beforeEach(() => {
-      func = null;
-      func = Validator.any().valid('this').valid('or').valid('that').valid(1);
+      schema = null;
+      schema = Validator.any().valid('this').valid('or').valid('that').valid(1);
     });
 
-    it('returns a function', () => {
-      assert.isFunction(func);
+    it('returns a schema', () => {
+      assert.isTrue(isSchema(schema));
     });
 
     it('returns `true` for items that are valid', () => {
-      expectSuccess(func, 'this');
-      expectSuccess(func, 'or');
-      expectSuccess(func, 'that');
-      expectSuccess(func, 1);
+      expectSuccess(schema, 'this');
+      expectSuccess(schema, 'or');
+      expectSuccess(schema, 'that');
+      expectSuccess(schema, 1);
     });
 
     it('throws a TypeError for all other values', () => {
-      expectTypeError(func, '');
-      expectTypeError(func, 'hey');
+      expectTypeError(schema, '');
+      expectTypeError(schema, 'hey');
     });
   });
 
   describe('with `as`', () => {
     beforeEach(() => {
-      func = null;
-      func = Validator.any().as('target');
+      schema = null;
+      schema = Validator.any().as('target');
     });
 
-    it('setter returns a function', () => {
-      assert.isFunction(func);
+    it('setter returns a schema', () => {
+      assert.isTrue(isSchema(schema));
     });
 
     it('getter returns value', () => {
-      assert.equal(func.as(), 'target');
+      assert.equal(schema.as(), 'target');
     });
   });
 
   describe('with `transform`', () => {
     beforeEach(() => {
-      func = null;
-      func = Validator.any().transform((val) => {
+      schema = null;
+      schema = Validator.any().transform((val) => {
         return val + '.suffix';
       }).transform((val) => {
         return val + '.second.suffix';
       });
     });
 
-    it('returns a function', () => {
-      assert.isFunction(func);
+    it('returns a schema', () => {
+      assert.isTrue(isSchema(schema));
     });
 
     it('function returns the transformed value', () => {
-      assert.equal(func('hey'), 'hey.suffix.second.suffix');
+      assert.equal(schema.validate('hey'), 'hey.suffix.second.suffix');
     });
   });
 });

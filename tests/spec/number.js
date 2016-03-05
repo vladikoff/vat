@@ -13,48 +13,49 @@ const Validator = require('../../lib/validator');
 const expectSuccess = Helpers.expectSuccess;
 const expectTypeError = Helpers.expectTypeError;
 const expectReferenceError = Helpers.expectReferenceError;
+const isSchema = Helpers.isSchema;
 
 describe('types/number', () => {
-  let func;
+  let schema;
 
   beforeEach(() => {
-    func = Validator.number();
+    schema = Validator.number();
   });
 
-  it('returns a function', () => {
-    assert.isFunction(func);
+  it('returns a schema', () => {
+    assert.isTrue(isSchema(schema));
   });
 
   it('succeeds for numeric values or values that can be transformed to boolean', () => {
-    expectSuccess(func, 0);
-    expectSuccess(func, '1', 1);
-    expectSuccess(func, Infinity);
-    expectSuccess(func, '3.1415', 3.1415);
+    expectSuccess(schema, 0);
+    expectSuccess(schema, '1', 1);
+    expectSuccess(schema, Infinity);
+    expectSuccess(schema, '3.1415', 3.1415);
   });
 
   it('throws a TypeError if not', () => {
-    expectTypeError(func, true);
-    expectTypeError(func, false);
-    expectTypeError(func, {});
-    expectTypeError(func, []);
-    expectTypeError(func, '');
-    expectTypeError(func, 'NaN');
-    expectTypeError(func, '3.1415notanumber');
-    expectTypeError(func, 'asdf.jkl');
+    expectTypeError(schema, true);
+    expectTypeError(schema, false);
+    expectTypeError(schema, {});
+    expectTypeError(schema, []);
+    expectTypeError(schema, '');
+    expectTypeError(schema, 'NaN');
+    expectTypeError(schema, '3.1415notanumber');
+    expectTypeError(schema, 'asdf.jkl');
   });
 
   describe('strict', () => {
     beforeEach(() => {
-      func = Validator.boolean().strict();
+      schema = Validator.boolean().strict();
     });
 
-    it('returns a function', () => {
-      assert.isFunction(func);
+    it('returns a schema', () => {
+      assert.isTrue(isSchema(schema));
     });
 
     it('throws for values that can be transformed to boolean', () => {
-      expectTypeError(func, 'true');
-      expectTypeError(func, 'false');
+      expectTypeError(schema, 'true');
+      expectTypeError(schema, 'false');
     });
   });
 });

@@ -7,40 +7,12 @@
 'use strict'; //jshint ignore:line
 
 const assert = require('chai').assert;
+const Helpers = require('../lib/helpers');
 const Validator = require('../../lib/validator');
 
-function expectSuccess(func, val, expected) {
-  if (arguments.length === 2) {
-    expected = val;
-  }
-
-  let result = func(val);
-
-  assert.strictEqual(result, expected);
-
-  return result;
-}
-
-function expectTypeError(func, val) {
-  let err;
-  try {
-    func(val);
-  } catch (_err) {
-    err = _err;
-  }
-  assert.instanceOf(err, TypeError);
-  assert.strictEqual(err.value, val);
-}
-
-function expectReferenceError(func, val) {
-  let err;
-  try {
-    func(val);
-  } catch (_err) {
-    err = _err;
-  }
-  assert.instanceOf(err, ReferenceError);
-}
+const expectSuccess = Helpers.expectSuccess;
+const expectTypeError = Helpers.expectTypeError;
+const expectReferenceError = Helpers.expectReferenceError;
 
 describe('lib/validator', () => {
   describe('interface', () => {

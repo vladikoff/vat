@@ -13,113 +13,114 @@ const Validator = require('../../lib/validator');
 const expectSuccess = Helpers.expectSuccess;
 const expectTypeError = Helpers.expectTypeError;
 const expectReferenceError = Helpers.expectReferenceError;
+const isSchema = Helpers.isSchema;
 
 describe('types/string', () => {
-  let func;
+  let schema;
 
   beforeEach(() => {
-    func = Validator.string();
+    schema = Validator.string();
   });
 
-  it('returns a function', () => {
-    assert.isFunction(func);
+  it('returns a schema', () => {
+    assert.isTrue(isSchema(schema));
   });
 
   it('success', () => {
-    expectSuccess(func, '', '');
-    expectSuccess(func, '123', '123');
+    expectSuccess(schema, '', '');
+    expectSuccess(schema, '123', '123');
     // strings are trimmed by default
-    expectSuccess(func, ' 123', '123');
-    expectSuccess(func, '123 ', '123');
+    expectSuccess(schema, ' 123', '123');
+    expectSuccess(schema, '123 ', '123');
     // optional by default
-    expectSuccess(func, undefined);
+    expectSuccess(schema, undefined);
   });
 
   it('throws a TypeError for non-strings', () => {
-    expectTypeError(func, null);
-    expectTypeError(func, true);
-    expectTypeError(func, 1);
-    expectTypeError(func, {});
-    expectTypeError(func, []);
+    expectTypeError(schema, null);
+    expectTypeError(schema, true);
+    expectTypeError(schema, 1);
+    expectTypeError(schema, {});
+    expectTypeError(schema, []);
   });
 
   describe('strict', () => {
     beforeEach(() => {
-      func = Validator.string().strict();
+      schema = Validator.string().strict();
     });
 
-    it('returns a function', () => {
-      assert.isFunction(func);
+    it('returns a schema', () => {
+      assert.isTrue(isSchema(schema));
     });
 
     it('success', () => {
       // strings are not trimmed
-      expectSuccess(func, ' 123', ' 123');
-      expectSuccess(func, '123 ', '123 ');
+      expectSuccess(schema, ' 123', ' 123');
+      expectSuccess(schema, '123 ', '123 ');
     });
   });
 
   describe('len', () => {
     beforeEach(() => {
-      func = Validator.string().len(2);
+      schema = Validator.string().len(2);
     });
 
-    it('returns a function', () => {
-      assert.isFunction(func);
+    it('returns a schema', () => {
+      assert.isTrue(isSchema(schema));
     });
 
     it('success', () => {
-      expectSuccess(func, '12', '12');
+      expectSuccess(schema, '12', '12');
     });
 
     it('throws a TypeError if too short', () => {
-      expectTypeError(func, '');
-      expectTypeError(func, '1');
+      expectTypeError(schema, '');
+      expectTypeError(schema, '1');
     });
 
     it('throws a TypeError if too long', () => {
-      expectTypeError(func, '123');
+      expectTypeError(schema, '123');
     });
   });
 
   describe('min', () => {
     beforeEach(() => {
-      func = Validator.string().min(2);
+      schema = Validator.string().min(2);
     });
 
-    it('returns a function', () => {
-      assert.isFunction(func);
+    it('returns a schema', () => {
+      assert.isTrue(isSchema(schema));
     });
 
     it('success', () => {
-      expectSuccess(func, '12', '12');
-      expectSuccess(func, '123', '123');
+      expectSuccess(schema, '12', '12');
+      expectSuccess(schema, '123', '123');
     });
 
     it('throws a TypeError if too short', () => {
-      expectTypeError(func, '');
-      expectTypeError(func, '1');
+      expectTypeError(schema, '');
+      expectTypeError(schema, '1');
     });
   });
 
   describe('max', () => {
     beforeEach(() => {
-      func = Validator.string().max(2);
+      schema = Validator.string().max(2);
     });
 
-    it('returns a function', () => {
-      assert.isFunction(func);
+    it('returns a schema', () => {
+      assert.isTrue(isSchema(schema));
     });
 
     it('success', () => {
-      expectSuccess(func, '', '');
-      expectSuccess(func, '1', '1');
-      expectSuccess(func, '12', '12');
+      expectSuccess(schema, '', '');
+      expectSuccess(schema, '1', '1');
+      expectSuccess(schema, '12', '12');
     });
 
     it('throws a TypeError if too long', () => {
-      expectTypeError(func, '123');
-      expectTypeError(func, '124');
+      expectTypeError(schema, '123');
+      expectTypeError(schema, '124');
     });
   });
 });

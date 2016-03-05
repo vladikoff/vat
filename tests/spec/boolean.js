@@ -13,44 +13,45 @@ const Validator = require('../../lib/validator');
 const expectSuccess = Helpers.expectSuccess;
 const expectTypeError = Helpers.expectTypeError;
 const expectReferenceError = Helpers.expectReferenceError;
+const isSchema = Helpers.isSchema;
 
 describe('types/boolean', () => {
-  let func;
+  let schema;
 
   beforeEach(() => {
-    func = Validator.boolean();
+    schema = Validator.boolean();
   });
 
-  it('returns a function', () => {
-    assert.isFunction(func);
+  it('returns a schema', () => {
+    assert.isTrue(isSchema(schema));
   });
 
   it('returns `true` for boolean values or values that can be transformed to boolean', () => {
-    expectSuccess(func, true);
-    expectSuccess(func, 'true', true);
-    expectSuccess(func, false);
-    expectSuccess(func, 'false', false);
+    expectSuccess(schema, true);
+    expectSuccess(schema, 'true', true);
+    expectSuccess(schema, false);
+    expectSuccess(schema, 'false', false);
   });
 
   it('throws a TypeError if not', () => {
-    expectTypeError(func, 0);
-    expectTypeError(func, 1);
-    expectTypeError(func, {});
-    expectTypeError(func, []);
+    expectTypeError(schema, 0);
+    expectTypeError(schema, 1);
+    expectTypeError(schema, {});
+    expectTypeError(schema, []);
   });
 
   describe('strict', () => {
     beforeEach(() => {
-      func = Validator.boolean().strict();
+      schema = Validator.boolean().strict();
     });
 
-    it('returns a function', () => {
-      assert.isFunction(func);
+    it('returns a schema', () => {
+      assert.isTrue(isSchema(schema));
     });
 
     it('throws for values that can be transformed to boolean', () => {
-      expectTypeError(func, 'true');
-      expectTypeError(func, 'false');
+      expectTypeError(schema, 'true');
+      expectTypeError(schema, 'false');
     });
   });
 });
