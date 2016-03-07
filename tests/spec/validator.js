@@ -29,9 +29,9 @@ describe('lib/validator', () => {
     let result;
 
     describe('simple values', () => {
-      let schema = Validator.string().required().valid('valid');
+      let schema = Validator.string().valid('valid');
 
-      describe('with valid data', () => {
+      describe('with valid, defined, data', () => {
         beforeEach(() => {
           result = Validator.validate('valid', schema);
         });
@@ -45,6 +45,21 @@ describe('lib/validator', () => {
         });
       });
 
+
+      describe('with valid, undefined, data', () => {
+        beforeEach(() => {
+          result = Validator.validate(undefined, schema);
+        });
+
+        it('returns an object with a null `error`', () => {
+          assert.isNull(result.error);
+        });
+
+        it('returns an object with `value`', () => {
+          assert.isUndefined(result.value);
+        });
+      });
+
       describe('with invalid data', () => {
         beforeEach(() => {
           result = Validator.validate('invalid', schema);
@@ -53,7 +68,6 @@ describe('lib/validator', () => {
         it('returns an object with an `error`', () => {
           assert.instanceOf(result.error, TypeError);
         });
-
       });
     });
 
@@ -91,9 +105,7 @@ describe('lib/validator', () => {
         });
 
         it('returns an object with `error`', () => {
-          // TypeError is thrown with `valid` declarations
-          // and `undefined` values.
-          assert.instanceOf(result.error, TypeError);
+          assert.instanceOf(result.error, ReferenceError);
           assert.equal(result.error.key, 'requiredValid');
         });
       });
@@ -104,8 +116,6 @@ describe('lib/validator', () => {
         });
 
         it('returns an object with `error`', () => {
-          // TypeError is thrown with `valid` declarations
-          // and `undefined` values.
           assert.instanceOf(result.error, ReferenceError);
           assert.equal(result.error.key, 'required');
         });
