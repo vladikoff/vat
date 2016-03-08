@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/*global require, describe, beforeEach, it*/
+/*global require, describe, before, it*/
 
 'use strict'; //jshint ignore:line
 
@@ -16,29 +16,31 @@ const expectReferenceError = Helpers.expectReferenceError;
 const isSchema = Helpers.isSchema;
 
 describe('types/any', () => {
-  let schema;
+  describe('with no modifiers', function () {
+    let schema;
 
-  beforeEach(() => {
-    schema = Validator.any();
+    before(() => {
+      schema = Validator.any();
+    });
+
+    it('returns a schema', () => {
+      assert.isTrue(isSchema(schema));
+    });
+
+    it('success', () => {
+      expectSuccess(schema, '', '');
+      expectSuccess(schema, '123', '123');
+      expectSuccess(schema, 123, 123);
+
+      // optional by default
+      expectSuccess(schema, undefined);
+    });
   });
 
-  it('returns a schema', () => {
-    assert.isTrue(isSchema(schema));
-  });
+  describe('required', () => {
+    let schema;
 
-  it('success', () => {
-    expectSuccess(schema, '', '');
-    expectSuccess(schema, '123', '123');
-    expectSuccess(schema, 123, 123);
-
-    // optional by default
-    expectSuccess(schema, undefined);
-  });
-
-  describe('with `required`', () => {
-    beforeEach(() => {
-      schema = null;
-      // required overrules optional
+    before(() => {
       schema = Validator.any().required();
     });
 
@@ -46,7 +48,7 @@ describe('types/any', () => {
       assert.isTrue(isSchema(schema));
     });
 
-    it('returns `true` for any values as long as they are defined', () => {
+    it('succeeds for any values as long as they are defined', () => {
       expectSuccess(schema, '');
       expectSuccess(schema, '123');
     });
@@ -56,9 +58,10 @@ describe('types/any', () => {
     });
   });
 
-  describe('with `optional`', () => {
-    beforeEach(() => {
-      schema = null;
+  describe('optional', () => {
+    let schema;
+
+    before(() => {
       schema = Validator.any().optional();
     });
 
@@ -66,19 +69,19 @@ describe('types/any', () => {
       assert.isTrue(isSchema(schema));
     });
 
-    it('returns `true` for strings', () => {
+    it('succeeds for strings', () => {
       expectSuccess(schema, '');
       expectSuccess(schema, '123');
     });
 
-
-    it('returns `true` if the value is undefined', () => {
+    it('returns value if the value is undefined', () => {
       expectSuccess(schema, undefined);
     });
 
     describe('`optional` after `required`', () => {
-      beforeEach(() => {
-        schema = null;
+      let schema;
+
+      before(() => {
         schema = Validator.any().required().optional();
       });
 
@@ -92,10 +95,10 @@ describe('types/any', () => {
     });
   });
 
+  describe('test', () => {
+    let schema;
 
-  describe('with `test`', () => {
-    beforeEach(() => {
-      schema = null;
+    before(() => {
       schema = Validator.any().test((val) => {
         return /^valid/.test(val);
       });
@@ -105,7 +108,7 @@ describe('types/any', () => {
       assert.isTrue(isSchema(schema));
     });
 
-    it('returns `true` for strings that pass the validation function', () => {
+    it('succeeds for strings that pass the validation function', () => {
       expectSuccess(schema, 'valid1');
       expectSuccess(schema, 'valid2');
     });
@@ -116,8 +119,9 @@ describe('types/any', () => {
     });
 
     describe('with chained `test`', () => {
-      beforeEach(() => {
-        schema = null;
+      let schema;
+
+      before(() => {
         schema = Validator.any().test((val) => {
           return /^valid/.test(val);
         }).test((val) => {
@@ -129,22 +133,23 @@ describe('types/any', () => {
         assert.isTrue(isSchema(schema));
       });
 
-      it('returns `true` for strings that pass the validation function', () => {
+      it('succeeds for strings that pass all validation functions', () => {
         expectSuccess(schema, 'valid.name');
         expectSuccess(schema, 'valid1.name');
         expectSuccess(schema, 'valid.with.lots.of.random.stuff.name');
       });
 
-      it('throws a TypeError for strings that do not pass the validation function', () => {
+      it('throws a TypeError for strings that do not pass all validation functions', () => {
         expectTypeError(schema, 'validname');
         expectTypeError(schema, 'invalid.name');
       });
     });
   });
 
-  describe('with `allow`', () => {
-    beforeEach(() => {
-      schema = null;
+  describe('allow', () => {
+    let schema;
+
+    before(() => {
       schema = Validator.any().test((val) => {
         return /^valid/.test(val);
       }).allow('');
@@ -154,12 +159,12 @@ describe('types/any', () => {
       assert.isTrue(isSchema(schema));
     });
 
-    it('returns `true` for items that pass the validation function', () => {
+    it('succeeds for items that pass the validation function', () => {
       expectSuccess(schema, 'valid1');
       expectSuccess(schema, 'valid2');
     });
 
-    it('returns `true` for tems that are allowed', () => {
+    it('succeeds for items that are allowed', () => {
       expectSuccess(schema, '');
     });
 
@@ -168,9 +173,10 @@ describe('types/any', () => {
     });
   });
 
-  describe('with `valid`', () => {
-    beforeEach(() => {
-      schema = null;
+  describe('valid', () => {
+    let schema;
+
+    before(() => {
       schema = Validator.any().valid('this').valid('or').valid('that').valid(1);
     });
 
@@ -178,22 +184,44 @@ describe('types/any', () => {
       assert.isTrue(isSchema(schema));
     });
 
-    it('returns `true` for items that are valid', () => {
+    it('succeeds for items that are valid', () => {
       expectSuccess(schema, 'this');
       expectSuccess(schema, 'or');
       expectSuccess(schema, 'that');
       expectSuccess(schema, 1);
+      expectSuccess(schema, undefined);
     });
 
     it('throws a TypeError for all other values', () => {
       expectTypeError(schema, '');
       expectTypeError(schema, 'hey');
     });
+
+    describe('and `required`', () => {
+      let schema;
+
+      before(() => {
+        schema = Validator.any().required().valid('value');
+      });
+
+      it('returns a schema', () => {
+        assert.isTrue(isSchema(schema));
+      });
+
+      it('succeeds for items that are valid', () => {
+        expectSuccess(schema, 'value');
+      });
+
+      it('throws a ReferenceError for undefined values', () => {
+        expectReferenceError(schema, undefined);
+      });
+    });
   });
 
-  describe('with `as`', () => {
-    beforeEach(() => {
-      schema = null;
+  describe('as', () => {
+    let schema;
+
+    before(() => {
       schema = Validator.any().as('target');
     });
 
@@ -206,9 +234,10 @@ describe('types/any', () => {
     });
   });
 
-  describe('with `transform`', () => {
-    beforeEach(() => {
-      schema = null;
+  describe('transform', () => {
+    let schema;
+
+    before(() => {
       schema = Validator.any().transform((val) => {
         return val + '.suffix';
       }).transform((val) => {
