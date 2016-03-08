@@ -108,6 +108,10 @@ describe('types/any', () => {
       assert.isTrue(isSchema(schema));
     });
 
+    it('succeeds for undefined if optional', () => {
+      expectSuccess(schema, undefined);
+    });
+
     it('succeeds for strings that pass the validation function', () => {
       expectSuccess(schema, 'valid1');
       expectSuccess(schema, 'valid2');
