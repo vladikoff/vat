@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/*global require, describe, beforeEach, it*/
+/*global require, describe, beforeEach, afterEach, it*/
 
 'use strict'; //jshint ignore:line
 
@@ -10,9 +10,20 @@ const assert = require('chai').assert;
 const Helpers = require('../lib/helpers');
 const Validator = require('../../lib/validator');
 
-const expectSuccess = Helpers.expectSuccess;
-const expectTypeError = Helpers.expectTypeError;
-const expectReferenceError = Helpers.expectReferenceError;
+const isSchema = Helpers.isSchema;
+
+const RESERVED_NAMES = ['register', 'unregister', 'validate'];
+
+function expectError(callback, ErrorType) {
+  let err;
+  try {
+    callback();
+  } catch (_err) {
+    err = _err;
+  }
+
+  assert.instanceOf(err, ErrorType);
+}
 
 describe('lib/validator', () => {
   describe('interface', () => {
@@ -20,6 +31,7 @@ describe('lib/validator', () => {
       assert.isFunction(Validator.any);
       assert.isFunction(Validator.boolean);
       assert.isFunction(Validator.number);
+      assert.isFunction(Validator.register);
       assert.isFunction(Validator.string);
       assert.isFunction(Validator.validate);
     });
@@ -157,6 +169,86 @@ describe('lib/validator', () => {
         it('returns the transformed value', () => {
           assert.isTrue(result.value.bool);
         });
+      });
+    });
+  });
+
+  describe('register', () => {
+    let ourSchema = Validator.string().test((val) => {
+      return /value/.test(val);
+    });
+
+    describe('reserved', () => {
+      RESERVED_NAMES.forEach((reservedName) => {
+        it('throws', () => {
+          expectError(() => {
+            Validator.register(reservedName, ourSchema);
+          }, Error);
+        });
+      });
+    });
+
+    describe('with a name that is already registered', () => {
+      it('throws', () => {
+        expectError(() => {
+          Validator.register('string', ourSchema);
+        }, Error);
+      });
+    });
+
+    describe('with an unregistered name', () => {
+      beforeEach(() => {
+        Validator.register('ourtype', ourSchema);
+      });
+
+      afterEach(() => {
+        Validator.unregister('ourtype');
+      });
+
+      it('allows a new schema to be fetched with the registered name', () => {
+        let schema = Validator.ourtype();
+        assert.isTrue(isSchema(schema));
+      });
+    });
+  });
+
+  describe('unregister', () => {
+    describe('reserved', () => {
+      RESERVED_NAMES.forEach((reservedName) => {
+        it('throws', () => {
+          expectError(() => {
+            Validator.unregister(reservedName);
+          }, Error);
+        });
+      });
+    });
+
+    describe('an item that is not registered', () => {
+      it('throws', () => {
+        expectError(() => {
+          Validator.unregister('not-registered');
+        }, Error);
+      });
+    });
+
+    describe('an item that is registered', () => {
+      let ourSchema = Validator.string().test((val) => {
+        return /value/.test(val);
+      });
+
+      beforeEach(() => {
+        Validator.register('ourtype', ourSchema);
+      });
+
+      it('succeeds', () => {
+        let schema = Validator.ourtype();
+        assert.isTrue(isSchema(schema));
+
+        Validator.unregister('ourtype');
+
+        expectError(() => {
+          schema = Validator.ourtype();
+        }, Error);
       });
     });
   });
