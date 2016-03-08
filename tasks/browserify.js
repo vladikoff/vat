@@ -8,10 +8,10 @@ module.exports = function (grunt) {
   grunt.config('browserify', {
     dist: {
       src: ['./lib/validator.js'],
-      dest: '.tmp/validator.js',
+      dest: '.tmp/vat.js',
       options: {
         browserifyOptions: {
-          standalone: 'Validator'
+          standalone: 'VAT'
         }
       }
     }

@@ -5,14 +5,11 @@
 module.exports = function (grunt) {
   'use strict';
 
-  grunt.config('babel', {
-    options: {
-      sourceMap: true
-    },
-    dist: {
-      files: {
-        "build/vat.js": ".tmp/vat.js"
-      }
-    }
-  });
+  grunt.registerTask('release', 'Generate a release', [
+    'build',
+    'bump-only',
+    'conventionalChangelog',
+    'bump-commit',
+    'buildcontrol'
+  ]);
 };

@@ -5,14 +5,8 @@
 module.exports = function (grunt) {
   'use strict';
 
-  grunt.config('babel', {
-    options: {
-      sourceMap: true
-    },
-    dist: {
-      files: {
-        "build/vat.js": ".tmp/vat.js"
-      }
-    }
-  });
+  grunt.registerTask('lint', 'Ensure all files pass muster', [
+    'eslint',
+    'jscs'
+  ]);
 };

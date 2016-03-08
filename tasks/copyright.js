@@ -5,14 +5,16 @@
 module.exports = function (grunt) {
   'use strict';
 
-  grunt.config('babel', {
-    options: {
-      sourceMap: true
-    },
-    dist: {
-      files: {
-        "build/vat.js": ".tmp/vat.js"
-      }
+  grunt.config('copyright', {
+    app: {
+      options: {
+        pattern: /This Source Code Form is subject to the terms of the Mozilla Public/
+      },
+      src: [
+        '**/*.js',
+        '!build/**',
+        '!node_modules/**'
+      ]
     }
   });
 };

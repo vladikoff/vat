@@ -5,13 +5,17 @@
 module.exports = function (grunt) {
   'use strict';
 
-  grunt.config('babel', {
+  grunt.config('buildcontrol', {
     options: {
-      sourceMap: true
+      commit: true,
+      push: true,
+      remote: 'git@github.com:shane-tomlinson/vat.git'
     },
-    dist: {
-      files: {
-        "build/vat.js": ".tmp/vat.js"
+    release: {
+      options: {
+        branch: 'release',
+        dir: 'build',
+        tag: '<%= pkg.version %>'
       }
     }
   });

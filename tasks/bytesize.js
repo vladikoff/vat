@@ -5,14 +5,9 @@
 module.exports = function (grunt) {
   'use strict';
 
-  grunt.config('babel', {
-    options: {
-      sourceMap: true
-    },
+  grunt.config('bytesize', {
     dist: {
-      files: {
-        "build/vat.js": ".tmp/vat.js"
-      }
+      src: ['build/vat.js', 'build/vat.min.js']
     }
   });
 };
