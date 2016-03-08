@@ -16,7 +16,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       g = self;
     } else {
       g = this;
-    }g.Validator = f();
+    }g.VAT = f();
   }
 })(function () {
   var define, module, exports;return function e(t, n, r) {
@@ -509,4 +509,4 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       register('string', require('./types/string')(any));
     }, { "./ourscore": 1, "./types/any": 2, "./types/boolean": 3, "./types/number": 4, "./types/string": 5 }] }, {}, [6])(6);
 });
-//# sourceMappingURL=validator.js.map
+//# sourceMappingURL=vat.js.map
