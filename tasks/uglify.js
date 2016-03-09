@@ -5,13 +5,12 @@
 module.exports = function (grunt) {
   'use strict';
 
-  grunt.config('babel', {
+  grunt.config('uglify', {
     options: {
-      sourceMap: true
     },
     dist: {
       files: {
-        "build/vat.js": ".tmp/vat.js"
+        "build/vat.min.js": ["build/vat.js"]
       }
     }
   });

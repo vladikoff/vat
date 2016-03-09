@@ -3,7 +3,12 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 module.exports = function (grunt) {
+  'use strict';
+
   grunt.registerTask('build', [
+    // Check to ensure all source files pass muster
+    'lint',
+
     // Clean files and folders from any previous build
     'clean',
 
@@ -11,6 +16,12 @@ module.exports = function (grunt) {
     'browserify',
 
     // Convert ES6 into ES5
-    'babel'
+    'babel',
+
+    // Minify
+    'uglify',
+
+    // Display the output size
+    'bytesize'
   ]);
 };
