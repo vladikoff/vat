@@ -13,7 +13,7 @@ module.exports = function (grunt) {
       createTag: true,
       files: ['package.json'],
       push: true,
-      pushTo: 'git@github.com:shane-tomlinson/vat.git master',
+      pushTo: 'origin',
       tagMessage: 'Version %VERSION%',
       tagName: 'source-%VERSION%',
       updateConfigs: ['pkg']
