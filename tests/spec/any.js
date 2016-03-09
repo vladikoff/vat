@@ -56,6 +56,27 @@ describe('types/any', () => {
     it('throws a ReferenceError if undefined', () => {
       expectReferenceError(schema, undefined);
     });
+
+    describe('with further tests', () => {
+      let schema;
+
+      beforeEach(() => {
+        schema = Validator.any().test(val => val === true).required();
+      });
+
+      it('succeeds when expected', () => {
+        expectSuccess(schema, true);
+      });
+
+      it('fails when expected', () => {
+        expectTypeError(schema, false);
+        expectTypeError(schema, '123');
+      });
+
+      it('throws a ReferenceError if undefined', () => {
+        expectReferenceError(schema, undefined);
+      });
+    });
   });
 
   describe('optional', () => {
