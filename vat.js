@@ -167,13 +167,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
          * @method required
          */
         required: function required() {
-          var duplicate = this.test(function (val) {
-            if (_.isUndefined(val)) {
-              throw new ReferenceError('missing value');
-            }
-            return true;
-          });
-
+          var duplicate = this._duplicate();
           duplicate._isRequired = true;
           return duplicate;
         },
@@ -270,8 +264,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           // If an undefined value and field is optional, no
           // further validation is done.
-          if (_.isUndefined(val) && !this._isRequired) {
-            return val;
+          if (_.isUndefined(val)) {
+            if (this._isRequired) {
+              throw new ReferenceError('missing value');
+            } else {
+              // If an undefined value and field is optional, no
+              // further validation is done.
+              return val;
+            }
           }
 
           // Finally, perform the validations.
