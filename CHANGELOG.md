@@ -1,3 +1,18 @@
+<a name="0.0.3"></a>
+## 0.0.3 (2016-03-09)
+
+
+### Bug Fixes
+
+* **API:** required checks should occur before any other validators. ([7087573](https://github.com/shane-tomlinson/vat/commit/7087573))
+* **build:** Fix grunt-bump, change pushTo to `origin` ([c8fff5a](https://github.com/shane-tomlinson/vat/commit/c8fff5a))
+
+### Features
+
+* **build:** Prepare for automated release. ([e221f06](https://github.com/shane-tomlinson/vat/commit/e221f06))
+
+
+
 <a name="0.0.2"></a>
 
 ## 0.0.2 (2016-03-08)
