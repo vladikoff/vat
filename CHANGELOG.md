@@ -1,3 +1,17 @@
+<a name="0.0.4"></a>
+## 0.0.4 (2016-03-11)
+
+
+### Bug Fixes
+
+* **rules:** Perform transformations before checking `valid` and `allowed` ([2005f10](https://github.com/shane-tomlinson/vat/commit/2005f10))
+
+### Features
+
+* **api:** `allow` and `valid` accept multiple arguments. ([e349764](https://github.com/shane-tomlinson/vat/commit/e349764))
+
+
+
 <a name="0.0.3"></a>
 ## 0.0.3 (2016-03-09)
 
