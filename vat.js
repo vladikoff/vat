@@ -121,14 +121,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 
         /**
-         * Explicitly allow a value, before any conversion
+         * Explicitly allow a value, before any conversion.
+         * Accepts one or more arguments.
          *
          * @method allow
-         * @param {variant} val
+         * @param {variant} vals
          */
-        allow: function allow(val) {
+        allow: function allow() /*...vals*/{
           var duplicate = this._duplicate('_allowed');
-          duplicate._allowed.push(val);
+          [].push.apply(duplicate._allowed, arguments);
           return duplicate;
         },
 
@@ -217,13 +218,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         /**
          * Create an exclusive allowed list of values.
+         * Accepts one or more arguments.
          *
          * @method valid
-         * @param {variant} val
+         * @param {variant} ...vals
          */
-        valid: function valid(val) {
+        valid: function valid() /*...vals*/{
           var duplicate = this._duplicate('_valid');
-          duplicate._valid.push(val);
+          [].push.apply(duplicate._valid, arguments);
           return duplicate;
         },
 
@@ -239,6 +241,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
          */
         validate: function validate(val) {
           var origValue = val;
+
+          // Perform any transformations.
+          val = this._transforms.reduce(function (val, transform) {
+            return transform(val);
+          }, val);
 
           // Check the exclusive allowed list first. If an exclusive allowed list
           // is defined and the value is not a member of list, throw
@@ -256,11 +263,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           if (_.contains(this._allowed, val)) {
             return val;
           }
-
-          // Perform any transformations.
-          val = this._transforms.reduce(function (val, transform) {
-            return transform(val);
-          }, val);
 
           // If an undefined value and field is optional, no
           // further validation is done.
