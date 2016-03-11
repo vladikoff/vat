@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/*global require, describe, before, it*/
+/*global require, describe, before, beforeEach, it*/
 
 'use strict'; //jshint ignore:line
 
@@ -276,6 +276,22 @@ describe('types/any', () => {
 
     it('function returns the transformed value', () => {
       assert.equal(schema.validate('hey'), 'hey.suffix.second.suffix');
+    });
+
+    describe('and `valid`', () => {
+      let schema;
+      before(() => {
+        schema = Validator.any().transform((val) => {
+          return val + '.suffix';
+        }).valid('value.suffix');
+      });
+
+      it('does the transform before checking validity', () => {
+        assert.equal(schema.validate('value'), 'value.suffix');
+
+        // converted to value.suffix.suffix
+        expectTypeError(schema, 'value.suffix');
+      });
     });
   });
 });
