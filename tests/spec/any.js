@@ -196,6 +196,35 @@ describe('types/any', () => {
     it('throws a TypeError for items that do not pass the validation function', () => {
       expectTypeError(schema, '123');
     });
+
+    describe('with multiple values', () => {
+      let schema;
+
+      before(() => {
+        schema = Validator.any().test((val) => {
+          return /^valid/.test(val);
+        }).allow('', 'value');
+      });
+
+      it('returns a schema', () => {
+        assert.isTrue(isSchema(schema));
+      });
+
+      it('succeeds for items that pass the validation function', () => {
+        expectSuccess(schema, 'valid1');
+        expectSuccess(schema, 'valid2');
+      });
+
+      it('succeeds for items that are allowed', () => {
+        expectSuccess(schema, '');
+        expectSuccess(schema, 'value');
+      });
+
+      it('throws a TypeError for items that do not pass the validation function', () => {
+        expectTypeError(schema, '123');
+      });
+
+    });
   });
 
   describe('valid', () => {
@@ -239,6 +268,31 @@ describe('types/any', () => {
 
       it('throws a ReferenceError for undefined values', () => {
         expectReferenceError(schema, undefined);
+      });
+    });
+
+    describe('multiple items', () => {
+      let schema;
+
+      before(() => {
+        schema = Validator.any().valid('this', 'or', 'that', 1);
+      });
+
+      it('returns a schema', () => {
+        assert.isTrue(isSchema(schema));
+      });
+
+      it('succeeds for items that are valid', () => {
+        expectSuccess(schema, 'this');
+        expectSuccess(schema, 'or');
+        expectSuccess(schema, 'that');
+        expectSuccess(schema, 1);
+        expectSuccess(schema, undefined);
+      });
+
+      it('throws a TypeError for all other values', () => {
+        expectTypeError(schema, '');
+        expectTypeError(schema, 'hey');
       });
     });
   });
