@@ -1,3 +1,13 @@
+<a name="0.0.5"></a>
+## 0.0.5 (2016-03-14)
+
+
+### Refactor
+
+* **api:** Rename `as` to `renameTo` for clarity. ([781ef75](https://github.com/shane-tomlinson/vat/commit/781ef75))
+
+
+
 <a name="0.0.4"></a>
 ## 0.0.4 (2016-03-11)
 
