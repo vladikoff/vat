@@ -147,7 +147,7 @@ describe('lib/validator', () => {
       describe('with a key that is renamed', () => {
         beforeEach(() => {
           schema = {
-            source: Validator.string().as('target')
+            source: Validator.string().renameTo('target')
           };
           result = Validator.validate({ source: 'value' }, schema);
         });
