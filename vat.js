@@ -102,6 +102,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var any = {
         _allowed: [],
+        _renameTo: null,
         _transforms: [],
         _valid: [],
         _validators: [],
@@ -135,30 +136,33 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 
         /**
-         * Export the result as {name} in the results.
-         *
-         * @method as
-         * @param {string} name
-         */
-        as: function as(name) {
-          if (arguments.length === 0) {
-            return this._as;
-          }
-
-          // no need to pass in an array name, none are being updated.
-          var duplicate = this._duplicate();
-          duplicate._as = name;
-          return duplicate;
-        },
-
-
-        /**
          * Mark the field as optional. All fields are optional by default.
          *
          * @method optional
          */
         optional: function optional() {
           return this;
+        },
+
+
+        /**
+         * Export the result as `name` in the results. If `name` is specified,
+         * acts as a setter. If `name` is not specified, acts as a getter.
+         *
+         * @method renameTo
+         * @param {string} [name] - if not specified, acts as a getter.
+         * @returns {Schema} if acting as a setter, or
+         *          {string} export name, only returned if acting as a getter.
+         */
+        renameTo: function renameTo(name) {
+          if (arguments.length === 0) {
+            return this._renameTo;
+          }
+
+          // no need to pass in an array name, none are being updated.
+          var duplicate = this._duplicate();
+          duplicate._renameTo = name;
+          return duplicate;
         },
 
 
@@ -450,7 +454,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 throw result.error;
               }
 
-              var targetKey = schema[key].as() || key;
+              var targetKey = schema[key].renameTo() || key;
               // only add undefined values iff the value is required
               if (!_.isUndefined(result.value) || schema[key]._isRequired) {
                 value[targetKey] = result.value;
