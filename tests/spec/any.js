@@ -297,11 +297,11 @@ describe('types/any', () => {
     });
   });
 
-  describe('as', () => {
+  describe('renameTo', () => {
     let schema;
 
     before(() => {
-      schema = Validator.any().as('target');
+      schema = Validator.any().renameTo('target');
     });
 
     it('setter returns a schema', () => {
@@ -309,7 +309,7 @@ describe('types/any', () => {
     });
 
     it('getter returns value', () => {
-      assert.equal(schema.as(), 'target');
+      assert.equal(schema.renameTo(), 'target');
     });
   });
 
