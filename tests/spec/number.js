@@ -10,9 +10,10 @@ const assert = require('chai').assert;
 const Helpers = require('../lib/helpers');
 const Validator = require('../../lib/validator');
 
+const expectRangeError = Helpers.expectRangeError;
+const expectReferenceError = Helpers.expectReferenceError;
 const expectSuccess = Helpers.expectSuccess;
 const expectTypeError = Helpers.expectTypeError;
-const expectReferenceError = Helpers.expectReferenceError;
 const isSchema = Helpers.isSchema;
 
 describe('types/number', () => {
@@ -46,16 +47,49 @@ describe('types/number', () => {
 
   describe('strict', () => {
     beforeEach(() => {
-      schema = Validator.boolean().strict();
+      schema = Validator.number().strict();
     });
 
     it('returns a schema', () => {
       assert.isTrue(isSchema(schema));
     });
 
-    it('throws for values that can be transformed to boolean', () => {
-      expectTypeError(schema, 'true');
-      expectTypeError(schema, 'false');
+    it('throws for values that can be transformed to number', () => {
+      expectTypeError(schema, '1');
+      expectTypeError(schema, '2');
+      expectTypeError(schema, '3.1415');
+    });
+  });
+
+  describe('min', () => {
+    beforeEach(() => {
+      schema = Validator.number().min(5);
+    });
+
+    it('allows values >= value', () => {
+      expectSuccess(schema, 5);
+      expectSuccess(schema, 6);
+    });
+
+    it('throws a RangeError if value is too low', () => {
+      expectRangeError(schema, 4);
+      expectRangeError(schema, 4.5);
+    });
+  });
+
+  describe('max', () => {
+    beforeEach(() => {
+      schema = Validator.number().max(5);
+    });
+
+    it('allows values <= value', () => {
+      expectSuccess(schema, 5);
+      expectSuccess(schema, 4);
+    });
+
+    it('throws a RangeError if value is too low', () => {
+      expectRangeError(schema, 5.1);
+      expectRangeError(schema, 6);
     });
   });
 });

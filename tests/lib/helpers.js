@@ -35,6 +35,16 @@ exports.expectTypeError = function (schema, value) {
   assert.strictEqual(err.value, value);
 };
 
+exports.expectRangeError = function (schema, value) {
+  let err;
+  try {
+    validate(schema, value);
+  } catch (_err) {
+    err = _err;
+  }
+  assert.instanceOf(err, RangeError);
+};
+
 exports.expectReferenceError = function (schema, value) {
   let err;
   try {
