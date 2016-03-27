@@ -27,11 +27,21 @@ describe('types/number', () => {
     assert.isTrue(isSchema(schema));
   });
 
-  it('succeeds for numeric values or values that can be transformed to boolean', () => {
+  it('succeeds for numeric values or values that can be transformed to a number', () => {
     expectSuccess(schema, 0);
+    expectSuccess(schema, '+0', 0);
+    expectSuccess(schema, '-0', -0);
     expectSuccess(schema, '1', 1);
-    expectSuccess(schema, Infinity);
+    expectSuccess(schema, '+1', 1);
+    expectSuccess(schema, '-1', -1);
+    expectSuccess(schema, Infinity, Infinity);
+    expectSuccess(schema, 'Infinity', Infinity);
+    expectSuccess(schema, '+Infinity', Infinity);
+    expectSuccess(schema, -Infinity, -Infinity);
+    expectSuccess(schema, '-Infinity', -Infinity);
     expectSuccess(schema, '3.1415', 3.1415);
+    expectSuccess(schema, '+3.1415', 3.1415);
+    expectSuccess(schema, '-3.1415', -3.1415);
   });
 
   it('throws a TypeError if not', () => {
