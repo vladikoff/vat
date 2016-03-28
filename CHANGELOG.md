@@ -1,3 +1,20 @@
+<a name="0.0.6"></a>
+## 0.0.6 (2016-03-28)
+
+
+### Bug Fixes
+
+* **api:** consistent return types of vat.validate and schema.validate ([d612682](https://github.com/shane-tomlinson/vat/commit/d612682))
+* **number:** Allow numbers to contain +- prefix, or be [+-]?Infinity ([a5c9194](https://github.com/shane-tomlinson/vat/commit/a5c9194))
+
+### Features
+
+* **api:** Add `min`, `max` to the `number` type. ([95a2986](https://github.com/shane-tomlinson/vat/commit/95a2986))
+* **docs:** Create a much better README.md ([d5bc70b](https://github.com/shane-tomlinson/vat/commit/d5bc70b))
+* **docs:** Start on documentation. ([5c047c5](https://github.com/shane-tomlinson/vat/commit/5c047c5))
+
+
+
 <a name="0.0.5"></a>
 ## 0.0.5 (2016-03-14)
 
