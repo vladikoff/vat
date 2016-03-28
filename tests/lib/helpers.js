@@ -18,41 +18,25 @@ exports.expectSuccess = function (schema, value, expected) {
   }
 
   let result = validate(schema, value);
-
-  assert.strictEqual(result, expected);
+  assert.strictEqual(result.value, expected);
 
   return result;
 };
 
 exports.expectTypeError = function (schema, value) {
-  let err;
-  try {
-    validate(schema, value);
-  } catch (_err) {
-    err = _err;
-  }
-  assert.instanceOf(err, TypeError);
-  assert.strictEqual(err.value, value);
+  let result = validate(schema, value);
+  assert.instanceOf(result.error, TypeError);
+  assert.strictEqual(result.error.value, value);
 };
 
 exports.expectRangeError = function (schema, value) {
-  let err;
-  try {
-    validate(schema, value);
-  } catch (_err) {
-    err = _err;
-  }
-  assert.instanceOf(err, RangeError);
+  let result = validate(schema, value);
+  assert.instanceOf(result.error, RangeError);
 };
 
 exports.expectReferenceError = function (schema, value) {
-  let err;
-  try {
-    validate(schema, value);
-  } catch (_err) {
-    err = _err;
-  }
-  assert.instanceOf(err, ReferenceError);
+  let result = validate(schema, value);
+  assert.instanceOf(result.error, ReferenceError);
 };
 
 /**

@@ -14,6 +14,9 @@ const isSchema = Helpers.isSchema;
 
 const RESERVED_NAMES = ['register', 'unregister', 'validate'];
 
+const expectSuccess = Helpers.expectSuccess;
+const expectTypeError = Helpers.expectTypeError;
+
 function expectError(callback, ErrorType) {
   let err;
   try {
@@ -48,8 +51,8 @@ describe('lib/validator', () => {
           result = vat.validate('valid', schema);
         });
 
-        it('returns an object with a null `error`', () => {
-          assert.isNull(result.error);
+        it('returns an object with undefined `error`', () => {
+          assert.isUndefined(result.error);
         });
 
         it('returns an object with `value`', () => {
@@ -63,8 +66,8 @@ describe('lib/validator', () => {
           result = vat.validate(undefined, schema);
         });
 
-        it('returns an object with a null `error`', () => {
-          assert.isNull(result.error);
+        it('returns an object with undefined `error`', () => {
+          assert.isUndefined(result.error);
         });
 
         it('returns an object with `value`', () => {
@@ -266,44 +269,11 @@ describe('lib/validator', () => {
         assert.isFunction(vat.number().less);
       });
 
-      describe('runs as expected', () => {
+      it('runs as expected', () => {
         let mustBeLessSchema = vat.number().less(5);
 
-        describe('failure', () => {
-          let err;
-          let result;
-
-          before(() => {
-            try {
-              result = mustBeLessSchema.validate(5);
-            } catch(_err) {
-              err = _err;
-            }
-          });
-
-          it('fails correctly', () => {
-            assert.instanceOf(err, TypeError);
-            assert.isUndefined(result);
-          });
-        });
-
-        describe('success', () => {
-          let err;
-          let result;
-
-          before(() => {
-            try {
-              result = mustBeLessSchema.validate(4);
-            } catch(_err) {
-              err = _err;
-            }
-          });
-
-          it('succeeds', () => {
-            assert.isUndefined(err);
-            assert.equal(result, 4);
-          });
-        });
+        expectTypeError(mustBeLessSchema, 5);
+        expectSuccess(mustBeLessSchema, 4);
       });
     });
   });

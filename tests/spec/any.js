@@ -329,7 +329,7 @@ describe('types/any', () => {
     });
 
     it('function returns the transformed value', () => {
-      assert.equal(schema.validate('hey'), 'hey.suffix.second.suffix');
+      assert.equal(schema.validate('hey').value, 'hey.suffix.second.suffix');
     });
 
     describe('and `valid`', () => {
@@ -341,7 +341,7 @@ describe('types/any', () => {
       });
 
       it('does the transform before checking validity', () => {
-        assert.equal(schema.validate('value'), 'value.suffix');
+        assert.equal(schema.validate('value').value, 'value.suffix');
 
         // converted to value.suffix.suffix
         expectTypeError(schema, 'value.suffix');
