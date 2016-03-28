@@ -2,13 +2,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/*global require, describe, beforeEach, afterEach, it*/
+/*global require, describe, before, beforeEach, afterEach, it*/
 
 'use strict'; //jshint ignore:line
 
 const assert = require('chai').assert;
 const Helpers = require('../lib/helpers');
-const Validator = require('../../lib/validator');
+const vat = require('../../lib/validator');
 
 const isSchema = Helpers.isSchema;
 
@@ -28,12 +28,12 @@ function expectError(callback, ErrorType) {
 describe('lib/validator', () => {
   describe('interface', () => {
     it('exports the expected inteface', () => {
-      assert.isFunction(Validator.any);
-      assert.isFunction(Validator.boolean);
-      assert.isFunction(Validator.number);
-      assert.isFunction(Validator.register);
-      assert.isFunction(Validator.string);
-      assert.isFunction(Validator.validate);
+      assert.isFunction(vat.any);
+      assert.isFunction(vat.boolean);
+      assert.isFunction(vat.number);
+      assert.isFunction(vat.register);
+      assert.isFunction(vat.string);
+      assert.isFunction(vat.validate);
     });
   });
 
@@ -41,11 +41,11 @@ describe('lib/validator', () => {
     let result;
 
     describe('simple values', () => {
-      let schema = Validator.string().valid('valid');
+      let schema = vat.string().valid('valid');
 
       describe('with valid, defined, data', () => {
         beforeEach(() => {
-          result = Validator.validate('valid', schema);
+          result = vat.validate('valid', schema);
         });
 
         it('returns an object with a null `error`', () => {
@@ -60,7 +60,7 @@ describe('lib/validator', () => {
 
       describe('with valid, undefined, data', () => {
         beforeEach(() => {
-          result = Validator.validate(undefined, schema);
+          result = vat.validate(undefined, schema);
         });
 
         it('returns an object with a null `error`', () => {
@@ -74,7 +74,7 @@ describe('lib/validator', () => {
 
       describe('with invalid data', () => {
         beforeEach(() => {
-          result = Validator.validate('invalid', schema);
+          result = vat.validate('invalid', schema);
         });
 
         it('returns an object with an `error`', () => {
@@ -85,14 +85,14 @@ describe('lib/validator', () => {
 
     describe('complex values', () => {
       let schema = {
-        optional: Validator.string().optional(),
-        required: Validator.string().required(),
-        requiredValid: Validator.string().required().valid('valid')
+        optional: vat.string().optional(),
+        required: vat.string().required(),
+        requiredValid: vat.string().required().valid('valid')
       };
 
       describe('with valid data', () => {
         beforeEach(() => {
-          result = Validator.validate({ required: 'value', requiredValid: 'valid' }, schema);
+          result = vat.validate({ required: 'value', requiredValid: 'valid' }, schema);
         });
 
         it('returns an object with a null `error`', () => {
@@ -113,7 +113,7 @@ describe('lib/validator', () => {
 
       describe('with missing data for field with `valid`', () => {
         beforeEach(() => {
-          result = Validator.validate({ required: 'value' }, schema);
+          result = vat.validate({ required: 'value' }, schema);
         });
 
         it('returns an object with `error`', () => {
@@ -124,7 +124,7 @@ describe('lib/validator', () => {
 
       describe('with missing data for field without `valid`', () => {
         beforeEach(() => {
-          result = Validator.validate({ requiredValid: 'valid' }, schema);
+          result = vat.validate({ requiredValid: 'valid' }, schema);
         });
 
         it('returns an object with `error`', () => {
@@ -135,7 +135,7 @@ describe('lib/validator', () => {
 
       describe('with invalid data', () => {
         beforeEach(() => {
-          result = Validator.validate({ required: 'value', requiredValid: 'invalid' }, schema);
+          result = vat.validate({ required: 'value', requiredValid: 'invalid' }, schema);
         });
 
         it('returns an object with `error`', () => {
@@ -147,9 +147,9 @@ describe('lib/validator', () => {
       describe('with a key that is renamed', () => {
         beforeEach(() => {
           schema = {
-            source: Validator.string().renameTo('target')
+            source: vat.string().renameTo('target')
           };
-          result = Validator.validate({ source: 'value' }, schema);
+          result = vat.validate({ source: 'value' }, schema);
         });
 
         it('renames the key to the target', () => {
@@ -161,9 +161,9 @@ describe('lib/validator', () => {
       describe('with a value that is transformed', () => {
         beforeEach(() => {
           schema = {
-            bool: Validator.boolean()
+            bool: vat.boolean()
           };
-          result = Validator.validate({ bool: 'true' }, schema);
+          result = vat.validate({ bool: 'true' }, schema);
         });
 
         it('returns the transformed value', () => {
@@ -174,7 +174,7 @@ describe('lib/validator', () => {
   });
 
   describe('register', () => {
-    let ourSchema = Validator.string().test((val) => {
+    let ourSchema = vat.string().test((val) => {
       return /value/.test(val);
     });
 
@@ -182,7 +182,7 @@ describe('lib/validator', () => {
       RESERVED_NAMES.forEach((reservedName) => {
         it('throws', () => {
           expectError(() => {
-            Validator.register(reservedName, ourSchema);
+            vat.register(reservedName, ourSchema);
           }, Error);
         });
       });
@@ -191,22 +191,22 @@ describe('lib/validator', () => {
     describe('with a name that is already registered', () => {
       it('throws', () => {
         expectError(() => {
-          Validator.register('string', ourSchema);
+          vat.register('string', ourSchema);
         }, Error);
       });
     });
 
     describe('with an unregistered name', () => {
       beforeEach(() => {
-        Validator.register('ourtype', ourSchema);
+        vat.register('ourtype', ourSchema);
       });
 
       afterEach(() => {
-        Validator.unregister('ourtype');
+        vat.unregister('ourtype');
       });
 
       it('allows a new schema to be fetched with the registered name', () => {
-        let schema = Validator.ourtype();
+        let schema = vat.ourtype();
         assert.isTrue(isSchema(schema));
       });
     });
@@ -217,7 +217,7 @@ describe('lib/validator', () => {
       RESERVED_NAMES.forEach((reservedName) => {
         it('throws', () => {
           expectError(() => {
-            Validator.unregister(reservedName);
+            vat.unregister(reservedName);
           }, Error);
         });
       });
@@ -226,29 +226,84 @@ describe('lib/validator', () => {
     describe('an item that is not registered', () => {
       it('throws', () => {
         expectError(() => {
-          Validator.unregister('not-registered');
+          vat.unregister('not-registered');
         }, Error);
       });
     });
 
     describe('an item that is registered', () => {
-      let ourSchema = Validator.string().test((val) => {
+      let ourSchema = vat.string().test((val) => {
         return /value/.test(val);
       });
 
       beforeEach(() => {
-        Validator.register('ourtype', ourSchema);
+        vat.register('ourtype', ourSchema);
       });
 
       it('succeeds', () => {
-        let schema = Validator.ourtype();
+        let schema = vat.ourtype();
         assert.isTrue(isSchema(schema));
 
-        Validator.unregister('ourtype');
+        vat.unregister('ourtype');
 
         expectError(() => {
-          schema = Validator.ourtype();
+          schema = vat.ourtype();
         }, Error);
+      });
+    });
+  });
+
+  describe('extend a built in type', () => {
+    let numberSchema = vat.number();
+    numberSchema.less = function (limit) {
+      return this.test((val) => {
+        return val < limit;
+      });
+    };
+
+    describe('added function', () => {
+      it('is available', () => {
+        assert.isFunction(vat.number().less);
+      });
+
+      describe('runs as expected', () => {
+        let mustBeLessSchema = vat.number().less(5);
+
+        describe('failure', () => {
+          let err;
+          let result;
+
+          before(() => {
+            try {
+              result = mustBeLessSchema.validate(5);
+            } catch(_err) {
+              err = _err;
+            }
+          });
+
+          it('fails correctly', () => {
+            assert.instanceOf(err, TypeError);
+            assert.isUndefined(result);
+          });
+        });
+
+        describe('success', () => {
+          let err;
+          let result;
+
+          before(() => {
+            try {
+              result = mustBeLessSchema.validate(4);
+            } catch(_err) {
+              err = _err;
+            }
+          });
+
+          it('succeeds', () => {
+            assert.isUndefined(err);
+            assert.equal(result, 4);
+          });
+        });
       });
     });
   });
