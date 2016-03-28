@@ -18,7 +18,7 @@ let result = ageSchema.validate(age);
 // result.value is populated with any transformed values that are returned.
 ```
 
-The [number schema](blob/master/docs/api.md#number) will accept any number
+The [number schema](docs/api.md#number) will accept any number
 or string that can be converted to a number and return its number equivalent.
 
 If `getAge` return the string `"24"`, vat will set `result.value` to
@@ -27,7 +27,7 @@ the number `12`.
 
 If `getAge` returns a string that cannot be converted into a number, or a
 string/number that is < 0, `result.error` will contain a
-`[TypeError](blob/master/docs/api.md#typeerror)`.
+[TypeError](docs/api.md#typeerror).
 
 ### Complex types
 Complex schemas can be created too:
@@ -46,7 +46,7 @@ let result = vat.validate(userData, userSchema);
 // result.value will contain an object with the transformed values.
 ```
 
-Complex schema are used in conjunction with [vat.validate](blob/master/docs/api.md#validatedata-schema).
+Complex schema are used in conjunction with [vat.validate](docs/api.md#validatedata-schema).
 In this example, the input data should contain 3 fields: `user_id`, `name`, and `age`.
 If validation succeeds, `result.value` will contain 3 fields: `userId`, `name`, and `age`.
 If validation fails, `result.error` will contain the type of validation error, and
@@ -57,7 +57,7 @@ See the [API docs](docs/api.md).
 
 ## Extend vat
 ### Add a new type
-vat allows new types to be registered with [vat.register](blob/master/docs/api.md#registertypename-schema).
+vat allows new types to be registered with [vat.register](docs/api.md#registertypename-schema).
 
 ```js
 const hexSchema = vat.string().test((val) => {
