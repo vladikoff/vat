@@ -208,7 +208,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         /**
          * Add a transformer. A transformer is a function that accepts
          * a value and returns another value. Validation will occur
-         * with returned value.
+         * with the transformed value.
          *
          * @method transform
          * @param {function} transformer
@@ -239,9 +239,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
          *
          * @method validate
          * @param {variant} val
-         * @returns {variant} transformed value. The same as `val` if no
-         * transformations made.
-         * @throws TypeError if validation fails
+         * @returns {object} result
+         * @returns {Error} [result.error] - Present if any validation errors occur.
+         * @returns {variant} result.value - The transformed value. Present if
+         * validation succeeds. Same as `val` if no transformation is made.
          */
         validate: function validate(val) {
           var origValue = val;
@@ -256,38 +257,42 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           // a validation error.
           if (this._valid.length) {
             if (_.contains(this._valid, val)) {
-              return val;
+              return { value: val };
             } else if (!_.isUndefined(val)) {
-              throw toValidationError(origValue);
+              return { error: toValidationError(origValue) };
             }
           }
 
           // Check against the allowed list. If the value is not a member
           // of the allowed list, continue.
           if (_.contains(this._allowed, val)) {
-            return val;
+            return { value: val };
           }
 
           // If an undefined value and field is optional, no
           // further validation is done.
           if (_.isUndefined(val)) {
             if (this._isRequired) {
-              throw new ReferenceError('missing value');
+              return { error: new ReferenceError('missing value') };
             } else {
               // If an undefined value and field is optional, no
               // further validation is done.
-              return val;
+              return { value: val };
             }
           }
 
           // Finally, perform the validations.
-          this._validators.forEach(function (validator) {
-            if (!validator(val)) {
-              throw toValidationError(origValue);
-            }
-          });
+          try {
+            this._validators.forEach(function (validator) {
+              if (!validator(val)) {
+                throw toValidationError(origValue);
+              }
+            });
+          } catch (e) {
+            return { error: e };
+          }
 
-          return val;
+          return { value: val };
         }
       };
 
@@ -331,15 +336,62 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var _ = require('../ourscore');
 
+      function toRangeError(value) {
+        var err = new RangeError('invalid value');
+        err.value = value;
+        return err;
+      }
+
+      var number = {
+        /**
+         * Specifies the maximum acceptable value
+         *
+         * @method max
+         * @param {number} limit
+         */
+
+        max: function max(limit) {
+          return this.test(function (val) {
+            if (val > limit) {
+              throw toRangeError(val);
+            }
+            return true;
+          });
+        },
+
+
+        /**
+         * Specifies the minimum acceptable value
+         *
+         * @method min
+         * @param {number} limit
+         */
+        min: function min(limit) {
+          return this.test(function (val) {
+            if (val < limit) {
+              throw toRangeError(val);
+            }
+            return true;
+          });
+        }
+      };
+
       module.exports = function (createValidator) {
         var validator = createValidator();
+        _.extend(validator, number);
 
         return validator.transform(function (val) {
           if (!_.isNumber(val)) {
-            if (/^\d+$/.test(val)) {
+            if (/^[+-]?\d+$/.test(val)) {
               return parseInt(val, 10);
-            } else if (/^\d*\.\d*$/.test(val)) {
+            } else if (/^[+-]?\d*\.\d*$/.test(val)) {
               return parseFloat(val);
+            } else if (/^[+-]?Infinity$/.test(val)) {
+              if (val[0] === '-') {
+                return -Infinity;
+              }
+
+              return Infinity;
             }
           }
 
@@ -375,7 +427,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 
         /**
-         * Specifies the maximum number of characters
+         * Specifies the maximum number of characters allowed (inclusive)
          *
          * @method max
          * @param {number} limit
@@ -388,7 +440,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 
         /**
-         * Specifies the minimum number of characters
+         * Specifies the minimum number of characters allowed (inclusive)
          *
          * @method min
          * @param {number} limit
@@ -426,24 +478,31 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var _ = require('./ourscore');
 
+      /**
+       * Validate data against a schema
+       *
+       * @param {variant} data - data to validate
+       * @param {Schema} schema - schema to use to validate
+       * @returns {object} result
+       *   @returns {Error} result.error - any error thrown
+       *   @returns {variant} result.value - transformed data
+       */
       function validate(data, schema) {
         var error = null;
         var value = data;
 
         try {
           if (_.isUndefined(schema)) {
-            var missingSchemaError = new Error('missing schema');
+            var missingSchemaError = new ReferenceError('missing schema');
             missingSchemaError.value = data;
             throw missingSchemaError;
           }
 
           if (_.isFunction(schema.validate)) {
-            // validate function should return converted values
-            value = schema.validate(data);
+            return schema.validate(data);
           } else {
-            // use the union to ensure all possible data has
-            // a corresponding schema item and all possible schema
-            // items have been checked.
+            // union ensures all data fields have a corresponding schema
+            // and all schemas are validated against.
             var allKeys = _.union(Object.keys(data), Object.keys(schema));
             value = {};
             allKeys.forEach(function (key) {
@@ -480,6 +539,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       var reserved = Object.keys(module.exports);
       var types = {};
 
+      /**
+       * Register a type to be validated against a schema
+       *
+       * @param {string} typeName - name of type
+       * @param {Schema} schema - schema used to validate
+       */
       function register(typeName, schema) {
         if (_.contains(reserved, typeName)) {
           throw new Error("'" + typeName + "' is reserved");
@@ -494,6 +559,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         };
       }
 
+      /**
+       * Unregister a type
+       *
+       * @param {string} typeName - name of type
+       */
       function unregister(typeName) {
         if (_.contains(reserved, typeName)) {
           throw new Error("'" + typeName + "' is reserved");
