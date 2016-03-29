@@ -53,6 +53,7 @@ If validation fails, `result.error` will contain the type of validation error, a
 `result.error.key` will contain the name of the field that caused the error.
 
 ## API
+
 See the [API docs](docs/api.md).
 
 ## Extend vat
@@ -71,16 +72,36 @@ let result = vat.hex().validate('deadbeef')
 ```
 
 ### Extend an existing type
-vat allows new functions to be added to existing types.
+vat allows new functions to be added to existing types. This is how
+plugins should extend existing types so that extensions are available
+to all callers of the type.
 
 ```js
-let numberSchema = vat.number();
-numberSchema.less = function (limit) {
-  return this.test((val) => {
-    return val < limit;
-  });
-};
-// less is now available to all callers of `vat.number()`
+vat.any().extend({
+  equal(expected) {
+    return this.test((val) => {
+      return val === expected;
+    });
+  }
+});
+// `equal` is now available to all callers of `vat.any()`
+```
+
+### Create a new type by cloning and extending an existing type
+vat allows new types to be created by cloning and extending an existing type.
+This is how plugins should extend an existing type to create a new type with
+extra functions.
+
+```js
+vat.register('assert', vat.any().clone().extend({
+  equal(expected) {
+    return this.test((val) => {
+      return val === expected;
+    });
+  }
+}));
+// Unlike the previous example, `equal` is not available to
+// callers of `vat.any()`, only to callers of `vat.assert()`.
 ```
 
 ## Installation
