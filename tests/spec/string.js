@@ -8,7 +8,7 @@
 
 const assert = require('chai').assert;
 const Helpers = require('../lib/helpers');
-const Validator = require('../../lib/validator');
+const vat = require('../../lib/vat');
 
 const expectSuccess = Helpers.expectSuccess;
 const expectTypeError = Helpers.expectTypeError;
@@ -19,7 +19,7 @@ describe('types/string', () => {
   let schema;
 
   beforeEach(() => {
-    schema = Validator.string();
+    schema = vat.string();
   });
 
   it('returns a schema', () => {
@@ -46,7 +46,7 @@ describe('types/string', () => {
 
   describe('strict', () => {
     beforeEach(() => {
-      schema = Validator.string().strict();
+      schema = vat.string().strict();
     });
 
     it('returns a schema', () => {
@@ -62,7 +62,7 @@ describe('types/string', () => {
 
   describe('len', () => {
     beforeEach(() => {
-      schema = Validator.string().len(2);
+      schema = vat.string().len(2);
     });
 
     it('returns a schema', () => {
@@ -85,7 +85,7 @@ describe('types/string', () => {
 
   describe('min', () => {
     beforeEach(() => {
-      schema = Validator.string().min(2);
+      schema = vat.string().min(2);
     });
 
     it('returns a schema', () => {
@@ -105,7 +105,7 @@ describe('types/string', () => {
 
   describe('max', () => {
     beforeEach(() => {
-      schema = Validator.string().max(2);
+      schema = vat.string().max(2);
     });
 
     it('returns a schema', () => {

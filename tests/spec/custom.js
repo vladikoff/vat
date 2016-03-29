@@ -8,26 +8,26 @@
 
 const assert = require('chai').assert;
 const Helpers = require('../lib/helpers');
-const Validator = require('../../lib/validator');
+const vat = require('../../lib/vat');
 
 const expectSuccess = Helpers.expectSuccess;
 const expectReferenceError = Helpers.expectReferenceError;
 
 describe('custom type', () => {
   before(() => {
-    Validator.register('custom',
-      Validator.any().test(val => val === true));
+    vat.register('custom',
+      vat.any().test(val => val === true));
   });
 
   after(() => {
-    Validator.unregister('custom');
+    vat.unregister('custom');
   });
 
   describe('optional', () => {
     let schema;
 
     beforeEach(() => {
-      schema = Validator.custom();
+      schema = vat.custom();
     });
 
     it('success', () => {
@@ -42,7 +42,7 @@ describe('custom type', () => {
     let schema;
 
     beforeEach(() => {
-      schema = Validator.custom().required();
+      schema = vat.custom().required();
     });
 
     it('success', () => {

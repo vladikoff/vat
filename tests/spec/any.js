@@ -8,7 +8,7 @@
 
 const assert = require('chai').assert;
 const Helpers = require('../lib/helpers');
-const Validator = require('../../lib/validator');
+const vat = require('../../lib/vat');
 
 const expectSuccess = Helpers.expectSuccess;
 const expectTypeError = Helpers.expectTypeError;
@@ -20,7 +20,7 @@ describe('types/any', () => {
     let schema;
 
     before(() => {
-      schema = Validator.any();
+      schema = vat.any();
     });
 
     it('returns a schema', () => {
@@ -41,7 +41,7 @@ describe('types/any', () => {
     let schema;
 
     before(() => {
-      schema = Validator.any().required();
+      schema = vat.any().required();
     });
 
     it('returns a schema', () => {
@@ -61,7 +61,7 @@ describe('types/any', () => {
       let schema;
 
       beforeEach(() => {
-        schema = Validator.any().test(val => val === true).required();
+        schema = vat.any().test(val => val === true).required();
       });
 
       it('succeeds when expected', () => {
@@ -83,7 +83,7 @@ describe('types/any', () => {
     let schema;
 
     before(() => {
-      schema = Validator.any().optional();
+      schema = vat.any().optional();
     });
 
     it('returns a schema', () => {
@@ -103,7 +103,7 @@ describe('types/any', () => {
       let schema;
 
       before(() => {
-        schema = Validator.any().required().optional();
+        schema = vat.any().required().optional();
       });
 
       it('returns a schema', () => {
@@ -120,7 +120,7 @@ describe('types/any', () => {
     let schema;
 
     before(() => {
-      schema = Validator.any().test((val) => {
+      schema = vat.any().test((val) => {
         return /^valid/.test(val);
       });
     });
@@ -147,7 +147,7 @@ describe('types/any', () => {
       let schema;
 
       before(() => {
-        schema = Validator.any().test((val) => {
+        schema = vat.any().test((val) => {
           return /^valid/.test(val);
         }).test((val) => {
           return /\.name$/.test(val);
@@ -175,7 +175,7 @@ describe('types/any', () => {
     let schema;
 
     before(() => {
-      schema = Validator.any().test((val) => {
+      schema = vat.any().test((val) => {
         return /^valid/.test(val);
       }).allow('');
     });
@@ -201,7 +201,7 @@ describe('types/any', () => {
       let schema;
 
       before(() => {
-        schema = Validator.any().test((val) => {
+        schema = vat.any().test((val) => {
           return /^valid/.test(val);
         }).allow('', 'value');
       });
@@ -231,7 +231,7 @@ describe('types/any', () => {
     let schema;
 
     before(() => {
-      schema = Validator.any().valid('this').valid('or').valid('that').valid(1);
+      schema = vat.any().valid('this').valid('or').valid('that').valid(1);
     });
 
     it('returns a schema', () => {
@@ -255,7 +255,7 @@ describe('types/any', () => {
       let schema;
 
       before(() => {
-        schema = Validator.any().required().valid('value');
+        schema = vat.any().required().valid('value');
       });
 
       it('returns a schema', () => {
@@ -275,7 +275,7 @@ describe('types/any', () => {
       let schema;
 
       before(() => {
-        schema = Validator.any().valid('this', 'or', 'that', 1);
+        schema = vat.any().valid('this', 'or', 'that', 1);
       });
 
       it('returns a schema', () => {
@@ -301,7 +301,7 @@ describe('types/any', () => {
     let schema;
 
     before(() => {
-      schema = Validator.any().renameTo('target');
+      schema = vat.any().renameTo('target');
     });
 
     it('setter returns a schema', () => {
@@ -317,7 +317,7 @@ describe('types/any', () => {
     let schema;
 
     before(() => {
-      schema = Validator.any().transform((val) => {
+      schema = vat.any().transform((val) => {
         return val + '.suffix';
       }).transform((val) => {
         return val + '.second.suffix';
@@ -335,7 +335,7 @@ describe('types/any', () => {
     describe('and `valid`', () => {
       let schema;
       before(() => {
-        schema = Validator.any().transform((val) => {
+        schema = vat.any().transform((val) => {
           return val + '.suffix';
         }).valid('value.suffix');
       });

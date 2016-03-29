@@ -8,7 +8,7 @@
 
 const assert = require('chai').assert;
 const Helpers = require('../lib/helpers');
-const vat = require('../../lib/validator');
+const vat = require('../../lib/vat');
 
 const isSchema = Helpers.isSchema;
 
@@ -28,7 +28,7 @@ function expectError(callback, ErrorType) {
   assert.instanceOf(err, ErrorType);
 }
 
-describe('lib/validator', () => {
+describe('lib/vat', () => {
   describe('interface', () => {
     it('exports the expected inteface', () => {
       assert.isFunction(vat.any);
