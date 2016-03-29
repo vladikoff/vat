@@ -8,7 +8,7 @@
 
 const assert = require('chai').assert;
 const Helpers = require('../lib/helpers');
-const Validator = require('../../lib/validator');
+const vat = require('../../lib/vat');
 
 const expectSuccess = Helpers.expectSuccess;
 const expectTypeError = Helpers.expectTypeError;
@@ -19,7 +19,7 @@ describe('types/boolean', () => {
   let schema;
 
   beforeEach(() => {
-    schema = Validator.boolean();
+    schema = vat.boolean();
   });
 
   it('returns a schema', () => {
@@ -42,7 +42,7 @@ describe('types/boolean', () => {
 
   describe('strict', () => {
     beforeEach(() => {
-      schema = Validator.boolean().strict();
+      schema = vat.boolean().strict();
     });
 
     it('returns a schema', () => {
