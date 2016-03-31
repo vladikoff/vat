@@ -10,8 +10,8 @@ const assert = require('chai').assert;
 const Helpers = require('../lib/helpers');
 const vat = require('../../lib/vat');
 
-const expectSuccess = Helpers.expectSuccess;
 const expectReferenceError = Helpers.expectReferenceError;
+const expectSuccess = Helpers.expectSuccess;
 
 describe('custom type', () => {
   before(() => {

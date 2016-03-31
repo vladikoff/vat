@@ -348,4 +348,73 @@ describe('types/any', () => {
       });
     });
   });
+
+  describe('extend', () => {
+    let schema;
+    before(() => {
+      schema = vat.any().extend({
+        equal(expected) {
+          return this.test((val) => {
+            return val === expected;
+          });
+        },
+
+        notEqual(forbidden) {
+          return this.test((val) => {
+            return val !== forbidden;
+          });
+        }
+      });
+    });
+
+    after(() => {
+      let any = vat.any();
+      delete any.equal;
+      delete any.notEqual;
+    });
+
+    it('returns the existing', () => {
+      assert.strictEqual(schema, vat.any());
+    });
+
+    it('extends the existing schema with the added functions', () => {
+      assert.isFunction(vat.any().equal);
+      assert.isFunction(vat.any().notEqual);
+    });
+  });
+
+
+  describe('clone', () => {
+    let schema;
+    before(() => {
+      schema = vat.any().clone().extend({
+        equal(expected) {
+          return this.test((val) => {
+            return val === expected;
+          });
+        },
+
+        notEqual(forbidden) {
+          return this.test((val) => {
+            return val !== forbidden;
+          });
+        }
+      });
+    });
+
+    it('returns a schema', () => {
+      assert.isTrue(isSchema(schema));
+    });
+
+    it('creates a new schema with the added functions', () => {
+      assert.isFunction(schema.equal);
+      assert.isFunction(schema.notEqual);
+    });
+
+    it('does not affect the original', () => {
+      let any = vat.any();
+      assert.isUndefined(any.equal);
+      assert.isUndefined(any.notEqual);
+    });
+  });
 });

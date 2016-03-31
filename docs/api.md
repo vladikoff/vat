@@ -9,6 +9,8 @@
 * [any](#any)
   * [any.allow](#anyallowvalues)
   * [any.as](#anyasname)
+  * [any.clone](#anyclone)
+  * [any.extend](#anyextendsrc)
   * [any.optional](#anyoptional)
   * [any.required](#anyrequired)
   * [any.strict](#anystrict)
@@ -117,12 +119,46 @@ let result = vat.validate({
 // result.value.name === 'Ham Burger';
 ```
 
+### `any.clone()`
+Create a clone of the current schema. Combine with [extend](#anyextendsrc)
+to produce a modified schema that will not affect usage elsewhere.
+
+Returns a Schema
+
+```js
+var clonedSchema = vat.any().clone();
+// new functions and properties can be added to
+// clonedSchema w/o affecting vat.any();
+```
+
+### `any.extend(src)`
+Mix functions into the current schema. __MODIFIES THE CURRENT SCHEMA__.
+
+Returns a Schema
+
+```js
+vat.any().extend({
+  equal(expected) {
+    return this.test((val) => {
+      return val === expected;
+    });
+  },
+
+  notEqual(forbidden) {
+    return this.test((val) => {
+      return val !== forbidden;
+    });
+  }
+}));
+// All callers of `vat.any()` can now make use of `equal` and `notEqual`
+```
+
 ### `any.optional()`
 Mark the field as optional. All fields are optional by default.
 
 Returns a Schema.
 ```js
-var optionalSchema = vat.any().optional();
+const optionalSchema = vat.any().optional();
 ```
 
 ### `any.required()`
@@ -131,7 +167,7 @@ Mark the field as required. Fields are optional by default.
 Returns a Schema.
 
 ```js
-var requiredSchema = vat.any().required();
+const requiredSchema = vat.any().required();
 ```
 ### `any.strict()`
 Remove current transforms.
@@ -139,7 +175,7 @@ Remove current transforms.
 Returns a Schema.
 
 ```js
-var strictlyBooleanSchema = vat.boolean().strict();
+const strictlyBooleanSchema = vat.boolean().strict();
 // strictlyBooleanSchema will fail with the strings `true` and `false`
 // instead of the default behavior of being transformed to
 // the boolean equivalent.
@@ -170,7 +206,7 @@ the transformed value.
 Returns a Schema.
 
 ```js
-let schema = vat.string().transform((val) => {
+const schema = vat.string().transform((val) => {
   // remove all whitespace from string
   return val && val.replace && val.replace(/\s/g, '');
 });
@@ -186,7 +222,7 @@ Returns a Schema.
 
 ```js
 // only accept binary digits
-let schema = vat.number().valid(0, 1);
+const schema = vat.number().valid(0, 1);
 ```
 ### `any.validate(value)`
 Validate a value.
