@@ -1,3 +1,23 @@
+<a name="0.0.7"></a>
+## 0.0.7 (2017-03-22)
+
+
+### Bug Fixes
+
+* **docs:** Fix links to api.md in README.md ([f0d9245](https://github.com/shane-tomlinson/vat/commit/f0d9245))
+
+### chore
+
+* **filename:** rename validator.js vat.js, Validator=>vat ([6b59eb5](https://github.com/shane-tomlinson/vat/commit/6b59eb5))
+* **filenames:** Rename ourscore.js to utils.js ([f15f1fd](https://github.com/shane-tomlinson/vat/commit/f15f1fd))
+
+### Features
+
+* **api:** Allow `test` to accept a RegExp for Strings ([54ba69a](https://github.com/shane-tomlinson/vat/commit/54ba69a))
+* **api:** Prepare for plugins. ([0391e53](https://github.com/shane-tomlinson/vat/commit/0391e53))
+
+
+
 <a name="0.0.6"></a>
 ## 0.0.6 (2016-03-28)
 

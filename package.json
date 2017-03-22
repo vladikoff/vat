@@ -1,6 +1,6 @@
 {
   "name": "vat",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "VAT - Validate and Transform data in JavaScript",
   "main": "index.js",
   "directories": {
