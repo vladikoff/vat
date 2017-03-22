@@ -123,6 +123,20 @@ describe('types/string', () => {
       expectTypeError(schema, '124');
     });
   });
+
+  describe('test', () => {
+    describe('with a regexp', () => {
+      beforeEach(() => {
+        schema = vat.string().test(/foo/);
+      });
+
+      it('success', () => {
+        expectSuccess(schema, 'foobar', 'foobar');
+      });
+
+      it('throws a TypeError if no match', () => {
+        expectTypeError(schema, 'bar');
+      });
+    });
+  });
 });
-
-
