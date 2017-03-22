@@ -7,7 +7,7 @@ module.exports = function (grunt) {
 
   grunt.config('browserify', {
     dist: {
-      src: ['./lib/validator.js'],
+      src: ['./lib/vat.js'],
       dest: '.tmp/vat.js',
       options: {
         browserifyOptions: {
