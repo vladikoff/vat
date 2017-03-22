@@ -1,3 +1,13 @@
+<a name="0.0.8"></a>
+## 0.0.8 (2017-03-22)
+
+
+### Bug Fixes
+
+* **build:** Fix the build! ([4cd243c](https://github.com/shane-tomlinson/vat/commit/4cd243c))
+
+
+
 <a name="0.0.7"></a>
 ## 0.0.7 (2017-03-22)
 
