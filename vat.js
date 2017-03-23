@@ -507,11 +507,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
        *
        * @param {variant} data - data to validate
        * @param {Schema} schema - schema to use to validate
+       * @param {Object} [options] - options
+       *   @param {Boolean} [options.allowUnknown] - when true, allows object to contain unknown keys. Defaults to false.
        * @returns {object} result
        *   @returns {Error} result.error - any error thrown
        *   @returns {variant} result.value - transformed data
        */
-      function validate(data, schema) {
+      function validate(data, schema, options) {
+        options = options || {};
+
         var error = null;
         var value = data;
 
@@ -530,17 +534,24 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             var allKeys = _.union(Object.keys(data), Object.keys(schema));
             value = {};
             allKeys.forEach(function (key) {
-              var result = validate(data[key], schema[key]);
+              if (schema[key]) {
+                var result = validate(data[key], schema[key], options);
+                if (result.error) {
+                  result.error.key = key;
+                  throw result.error;
+                }
 
-              if (result.error) {
-                result.error.key = key;
-                throw result.error;
-              }
-
-              var targetKey = schema[key].renameTo() || key;
-              // only add undefined values iff the value is required
-              if (!_.isUndefined(result.value) || schema[key]._isRequired) {
-                value[targetKey] = result.value;
+                var targetKey = schema[key].renameTo() || key;
+                // only add undefined values iff the value is required
+                if (!_.isUndefined(result.value) || schema[key]._isRequired) {
+                  value[targetKey] = result.value;
+                }
+              } else if (options.allowUnknown) {
+                value[key] = data[key];
+              } else {
+                var _error = new ReferenceError("'" + key + "' is not allowed");
+                _error.key = key;
+                throw _error;
               }
             });
           }
