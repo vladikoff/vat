@@ -1,7 +1,7 @@
 
 # VAT API Reference
 
-## Version 0.0.5
+## Version 0.0.9
 
 * [register](#registertypename-schema)
 * [unregister](#unregistertypename)
@@ -58,11 +58,13 @@ Unregister a type.
 vat.unregister('hex');
 ```
 
-## `validate(data, schema)`
+## `validate(data, schema, options)`
 Validate data against the schema.
 
 * `data` |Variant| value to be validated
 * `schema` |Schema| schema to use to validate
+* `options` |Object| Optional options
+  * `options.allowUnknown` |Boolean| when true, allows object to contain unknown keys. Defaults to false.
 
 Returns an object containing:
 * |Error| result.error - any error thrown. If validating an object, `error` will
@@ -182,18 +184,19 @@ const strictlyBooleanSchema = vat.boolean().strict();
 ```
 
 ### `any.test(validator)`
-Add a validation test function. Function will be called with
+Add a validation test function or RegExp. Function will be called with
 value being validated.
 
-* `validator` |Function| validation function
+* `validator` |Function_or_RegExp| validation function or RegExp
 
 Returns a Schema.
 
 ```js
+// hexSchema and altHexSchema only allow hex strings.
 const hexSchema = vat.string().test((val) => {
   return /[a-f0-9]+/.test(val);
 });
-// hexSchema only allows hex strings.
+const altHexSchema = vat.string().test(/[a-f0-9]+/);
 ```
 
 ### `any.transform(transformer)`
@@ -335,13 +338,17 @@ const minLengthSchema = vat.string().min(1);
 
 ## Validation Errors
 ### `ReferenceError`
-Returned if a required field is missing from the passed in data object or is undefined.
+Returned in the following cases:
 
-If validating an object, returned error will contain a `key` field that
+* Vat.validate is called without a schema.
+* A required field is missing or undefined.
+* An unknown key is present and `allowUnknown` is `false`.
+
+If validating an object, the returned error will contain a `key` field that
 contains the name of the failed item.
 
 ### `TypeError`
-Returend if a field is defined but does not pass validation.
+Returned if a field is defined but does not pass validation.
 
-If validating an object, returned error will contain a `key` field that
+If validating an object, the returned error will contain a `key` field that
 contains the name of the failed item.

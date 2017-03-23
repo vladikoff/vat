@@ -173,6 +173,38 @@ describe('lib/vat', () => {
           assert.isTrue(result.value.bool);
         });
       });
+
+      describe('with an extra key', () => {
+        beforeEach(() => {
+          schema = {
+            bool: vat.boolean()
+          };
+        });
+
+        describe('allowUnknown: false (default)', () => {
+          beforeEach(() => {
+            result = vat.validate({ bool: 'true', string: 'a string' }, schema);
+          });
+
+          it('errors on the extra field', () => {
+            assert.ok(result.error);
+            assert.equal(result.error.key, 'string');
+          });
+        });
+
+
+        describe('allowUnknown: true', () => {
+          beforeEach(() => {
+            result = vat.validate({ bool: true, string: 'a string' }, schema, { allowUnknown: true });
+          });
+
+          it('does not error with extra field', () => {
+            assert.isNull(result.error);
+            assert.equal(result.value.bool, true);
+            assert.equal(result.value.string, 'a string');
+          });
+        });
+      });
     });
   });
 
