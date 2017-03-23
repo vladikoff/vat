@@ -1,3 +1,13 @@
+<a name="0.0.9"></a>
+## 0.0.9 (2017-03-23)
+
+
+### Features
+
+* **options:** Add an `allowUnknown` option. r=@vbudhram ([7664a9a](https://github.com/shane-tomlinson/vat/commit/7664a9a))
+
+
+
 <a name="0.0.8"></a>
 ## 0.0.8 (2017-03-22)
 
