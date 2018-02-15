@@ -1,0 +1,19 @@
+{
+  "name": "node-vat",
+  "version": "0.0.9",
+  "description": "Validate and Transform using schemas.",
+  "main": "vat.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shane-tomlinson/vat.git"
+  },
+  "author": "Shane Tomlinson <shane@shanetomlinson.com>",
+  "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://github.com/shane-tomlinson/vat/issues"
+  },
+  "homepage": "https://github.com/shane-tomlinson/vat#readme"
+}
